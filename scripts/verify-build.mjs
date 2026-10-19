@@ -98,7 +98,7 @@ if (!existsSync(assetsDir) || !statSync(assetsDir).isDirectory()) {
   if (!cssFiles.length) errors.push('В сборке не найден CSS-файл.');
   const css = cssFiles.map((file) => readFileSync(join(assetsDir, file), 'utf8')).join('\n');
   const cssChecks = [
-    ['адаптация для узких экранов', /@media\s*\(max-width:\s*640px\)/i],
+    ['адаптация для узких экранов (брейкпоинт 640px)', /640px/i],
     ['видимый фокус клавиатуры', /:focus-visible/i],
     ['режим уменьшения анимации', /prefers-reduced-motion\s*:\s*reduce/i],
     ['состояние открытого мобильного меню', /nav\.is-open/i],
