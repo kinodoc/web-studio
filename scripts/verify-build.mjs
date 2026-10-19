@@ -22,7 +22,13 @@ for (const id of ids) {
 for (const match of html.matchAll(/\bhref\s*=\s*["']([^"']*)["']/gi)) {
   const href = match[1].trim();
   if (href.startsWith('#') && href.length > 1) {
-    const fragment = decodeURIComponent(href.slice(1));
+    let fragment;
+    try {
+      fragment = decodeURIComponent(href.slice(1));
+    } catch {
+      errors.push(`Некорректный якорь: ${href}`);
+      continue;
+    }
     if (!idSet.has(fragment)) errors.push(`Ссылка на отсутствующий раздел: ${href}`);
   }
 }
@@ -42,7 +48,14 @@ for (const match of html.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/gi)) {
   if (pathname.startsWith(base + '/')) pathname = pathname.slice(base.length);
   else if (pathname === base) pathname = '/';
 
-  const target = resolve(dist, '.' + decodeURIComponent(pathname));
+  let decodedPath;
+  try {
+    decodedPath = decodeURIComponent(pathname);
+  } catch {
+    errors.push(`Некорректное кодирование пути: ${raw}`);
+    continue;
+  }
+  const target = resolve(dist, '.' + decodedPath);
   if (!target.startsWith(dist + '/') && target !== dist) {
     errors.push(`Путь выходит за пределы dist: ${raw}`);
     continue;
@@ -51,6 +64,37 @@ for (const match of html.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/gi)) {
     ? join(target, 'index.html')
     : target;
   if (!existsSync(candidate)) errors.push(`Локальный ресурс не найден: ${raw} (ожидался ${candidate.slice(dist.length)})`);
+}
+
+const h1Count = [...html.matchAll(/<h1\b[^>]*>/gi)].length;
+if (h1Count !== 1) errors.push(`На странице должен быть ровно один h1; найдено: ${h1Count}`);
+
+const viewport = /<meta\b(?=[^>]*\bname=["']viewport["'])(?=[^>]*\bcontent=["'][^"']+["'])[^>]*>/i;
+if (!viewport.test(html)) errors.push('Не найден meta viewport с содержимым.');
+
+const imageTags = [...html.matchAll(/<img\b[^>]*>/gi)].map((m) => m[0]);
+for (const tag of imageTags) {
+  if (!/\balt\s*=\s*["'][^"']*["']/i.test(tag)) errors.push(`У изображения отсутствует alt: ${tag.slice(0, 100)}`);
+}
+
+const buttonTags = [...html.matchAll(/<button\b[^>]*>[\s\S]*?<\/button>/gi)].map((m) => m[0]);
+for (const tag of buttonTags) {
+  const hasLabel = /\baria-label\s*=\s*["'][^"']+["']/i.test(tag)
+    || /\baria-labelledby\s*=\s*["'][^"']+["']/i.test(tag)
+    || /<button\b[^>]*>\s*(?:<[^>]+>\s*)*[^\s<][\s\S]*?<\/button>/i.test(tag);
+  if (!hasLabel) errors.push(`У кнопки отсутствует доступное имя: ${tag.slice(0, 120)}`);
+}
+
+const anchorTags = [...html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/gi)].map((m) => m[0]);
+for (const tag of anchorTags) {
+  const hasLabel = /\baria-label\s*=\s*["'][^"']+["']/i.test(tag)
+    || /\baria-labelledby\s*=\s*["'][^"']+["']/i.test(tag)
+    || /<a\b[^>]*>\s*(?:<[^>]+>\s*)*[^\s<][\s\S]*?<\/a>/i.test(tag);
+  if (!hasLabel) errors.push(`У ссылки отсутствует доступное имя: ${tag.slice(0, 120)}`);
+  if (/\btarget\s*=\s*["']_blank["']/i.test(tag)
+      && !/\brel\s*=\s*["'][^"']*\b(?:noopener|noreferrer)\b[^"']*["']/i.test(tag)) {
+    errors.push(`Ссылка target="_blank" должна содержать rel="noopener" или rel="noreferrer": ${tag.slice(0, 120)}`);
+  }
 }
 
 const required = [
@@ -75,4 +119,4 @@ if (errors.length) {
   console.error(`Проверка сборки провалена: ${errors.length} ошибка(ок).`);
   process.exit(1);
 }
-console.log(`OK: HTML, ${ids.length} ID, внутренние якоря, локальные ресурсы и базовые SEO-поля проверены.`);
+console.log(`OK: HTML, ${ids.length} ID, ${h1Count} h1, ${anchorTags.length} ссылок, доступные имена, внутренние якоря, локальные ресурсы и базовые SEO-поля проверены.`);
