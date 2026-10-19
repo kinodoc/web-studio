@@ -460,3 +460,42 @@ body:not(.cosmos-home) .form-submit:disabled {
     font-size: 12px;
   }
 }
+
+
+/* Match the multi-page menu on tablet and compact laptop widths. */
+@media (min-width: 701px) and (max-width: 1100px) {
+  .cosmos-header { height: 78px; }
+  .cosmos-nav {
+    display: none;
+    position: absolute;
+    top: 77px;
+    left: 0;
+    right: 0;
+    max-height: calc(100svh - 78px);
+    overflow-y: auto;
+    background: #0d100d;
+    padding: 22px;
+    border: 1px solid var(--cos-line);
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .cosmos-nav.is-open { display: flex; }
+  .cosmos-nav > a:not(.nav-contact) { display: block; }
+  .cosmos-nav .nav-contact { padding: 12px; font-size: 10px; }
+  .cosmos-menu {
+    display: flex;
+    width: 35px;
+    height: 35px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--cos-line);
+    margin-left: 10px;
+  }
+  .cosmos-menu span { height: 1px; width: 14px; background: var(--cos-paper); }
+}
