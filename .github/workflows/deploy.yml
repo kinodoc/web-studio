@@ -1,37 +1,40 @@
-name: Deploy website to GitHub Pages
+name: Build and security audit
 on:
   push:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 concurrency:
-  group: pages
+  group: site-validation
   cancel-in-progress: true
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
-      - name: Audit npm dependencies
-        run: npm audit --audit-level=low || true
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Create and commit lockfile if missing
+        if: ${{ hashFiles('package-lock.json') == '' }}
+        run: |
+          npm install --package-lock-only
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore: lock npm dependency tree"
+          git push
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Security audit
+        run: npm audit --audit-level=low
+      - name: Astro diagnostics
+        run: npm run check
+      - name: Production build
+        run: npm run build
+      - name: Verify static output
+        run: |
+          test -s dist/index.html
+          test -s dist/robots.txt
+          test -s dist/sitemap-index.xml
