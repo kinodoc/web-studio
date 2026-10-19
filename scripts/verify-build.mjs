@@ -207,6 +207,20 @@ for (const pagePath of collectHtmlFiles(dist)) {
   if (!/<meta\b[^>]*\bname=["']description["'][^>]*\bcontent=["'][^"']+["']/i.test(pageHtml)) errors.push(`${relativePage}: отсутствует meta description.`);
   if (!/<link\b[^>]*\brel=["']canonical["'][^>]*\bhref=["']https?:\/\/[^"']+["']/i.test(pageHtml)) errors.push(`${relativePage}: отсутствует canonical URL.`);
 
+  if (!/<meta\b(?=[^>]*\bname=["']viewport["'])(?=[^>]*\bcontent=["'][^"']+["'])[^>]*>/i.test(pageHtml)) errors.push(relativePage + ': отсутствует корректный meta viewport.');
+  if (!/<main\b[^>]*\bid=["']top["']/i.test(pageHtml)) errors.push(relativePage + ': отсутствует основная область main#top.');
+  if (!/<a\b[^>]*class=["']skip-link["'][^>]*href=["']#top["']/i.test(pageHtml)) errors.push(relativePage + ': отсутствует ссылка быстрого перехода к содержимому.');
+  if (!/<meta\b[^>]*\bproperty=["']og:title["']/i.test(pageHtml)) errors.push(relativePage + ': отсутствует Open Graph title.');
+
+  for (const tag of pageHtml.matchAll(/<img\b[^>]*>/gi)) {
+    if (!/\balt=["'][^"']*["']/i.test(tag[0])) errors.push(relativePage + ': у изображения отсутствует alt: ' + tag[0].slice(0, 100));
+  }
+  for (const tag of pageHtml.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/gi)) {
+    if (/\btarget=["']_blank["']/i.test(tag[0]) && !/\brel=["'][^"']*\b(?:noopener|noreferrer)\b[^"']*["']/i.test(tag[0])) {
+      errors.push(relativePage + ': ссылка target="_blank" должна иметь rel="noopener" или rel="noreferrer".');
+    }
+  }
+
   for (const match of pageHtml.matchAll(/\bhref\s*=\s*["']([^"']*)["']/gi)) {
     const href = match[1].trim();
     if (href.startsWith('#') && href.length > 1) {
