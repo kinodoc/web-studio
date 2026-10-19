@@ -69,14 +69,18 @@ if (adminRoot instanceof HTMLElement && !adminRoot.dataset.initialized) {
   const replyButton = adminRoot.querySelector('[data-admin-reply-send]');
   const status = adminRoot.querySelector('[data-admin-status]');
   const logout = adminRoot.querySelector('[data-admin-logout]');
+  type AdminConversation = { id: string; unread: number; createdAt: string; lastMessageAt: string; lastMessagePreview: string };
   const tokenKey = 'webStudioAdminSessionV1';
   let session = sessionStorage.getItem(tokenKey) || '';
   let selectedConversation = '';
-  let conversations = [];
+  let conversations: AdminConversation[] = [];
   let pollTimer = 0;
-  const setText = (node, value) => { if (node instanceof HTMLElement) node.textContent = value; };
-  async function request(path, options = {}) {
-    const response = await fetch(api + path, { ...options, headers: { 'Content-Type': 'application/json', ...(session ? { Authorization: 'Bearer ' + session } : {}), ...(options.headers || {}) } });
+  const setText = (node: Element | null, value: string) => { if (node instanceof HTMLElement) node.textContent = value; };
+  async function request(path: string, options: RequestInit = {}) {
+    const requestHeaders = new Headers(options.headers);
+    requestHeaders.set('Content-Type', 'application/json');
+    if (session) requestHeaders.set('Authorization', 'Bearer ' + session);
+    const response = await fetch(api + path, { ...options, headers: requestHeaders });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {
       if (response.status === 401) signOut(false);
@@ -101,7 +105,7 @@ if (adminRoot instanceof HTMLElement && !adminRoot.dataset.initialized) {
     showLogin();
     if (showMessage) setText(loginStatus, 'Вы вышли из панели.');
   }
-  function renderConversations(items) {
+  function renderConversations(items: AdminConversation[]) {
     if (!(conversationList instanceof HTMLElement)) return;
     conversations = items;
     conversationList.replaceChildren();
@@ -161,14 +165,14 @@ if (adminRoot instanceof HTMLElement && !adminRoot.dataset.initialized) {
     if (replyInput instanceof HTMLTextAreaElement) replyInput.disabled = false;
     if (replyButton instanceof HTMLButtonElement) replyButton.disabled = false;
   }
-  async function selectConversation(id) {
+  async function selectConversation(id: string) {
     selectedConversation = id;
     if (replyInput instanceof HTMLTextAreaElement) replyInput.disabled = true;
     if (replyButton instanceof HTMLButtonElement) replyButton.disabled = true;
     await loadConversations();
     await loadMessages();
   }
-  async function signIn(password) {
+  async function signIn(password: string) {
     if (!api) throw new Error('Адрес API не настроен. Чат пока не подключён.');
     const response = await fetch(api + '/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
     const result = await response.json().catch(() => ({}));
