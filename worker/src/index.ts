@@ -1,5 +1,13 @@
+type D1StatementLike = {
+  bind(...values: unknown[]): D1StatementLike;
+  first<T = Record<string, unknown>>(): Promise<T | null>;
+  all<T = Record<string, unknown>>(): Promise<{ results: T[] }>;
+  run(): Promise<unknown>;
+};
+type D1DatabaseLike = { prepare(query: string): D1StatementLike; batch(statements: D1StatementLike[]): Promise<unknown[]> };
+
 interface Env {
-  DB: D1Database;
+  DB: D1DatabaseLike;
   ALLOWED_ORIGIN: string;
   ADMIN_PASSWORD: string;
   ADMIN_SESSION_SECRET: string;
