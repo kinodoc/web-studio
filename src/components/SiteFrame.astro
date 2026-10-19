@@ -1,0 +1,27 @@
+---
+const { active = '' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const links = [
+  { label: 'Главная', href: base, key: 'home' },
+  { label: 'Услуги', href: base + 'services/', key: 'services' },
+  { label: 'Контакты', href: base + 'contacts/', key: 'contacts' },
+];
+---
+<header class="site-header">
+  <a class="brand" href={base} aria-label="WEB STUDIO — главная">
+    <span class="brand-mark">W<span>·</span></span>
+    <span class="brand-name">WEB<span>STUDIO</span></span>
+  </a>
+  <button class="menu-toggle" data-menu-toggle aria-controls="site-navigation" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span></button>
+  <nav class="nav" id="site-navigation" data-menu aria-label="Главная навигация">
+    {links.map((link) => <a class:list={[{ 'nav-current': active === link.key }]} href={link.href} aria-current={active === link.key ? 'page' : undefined}>{link.label}</a>)}
+    <a class="nav-cta" href={base + 'contacts/'}>Обсудить проект <span>↗</span></a>
+  </nav>
+</header>
+<slot />
+<footer class="footer section-shell">
+  <a class="brand" href={base} aria-label="WEB STUDIO — главная"><span class="brand-mark">W<span>·</span></span><span class="brand-name">WEB<span>STUDIO</span></span></a>
+  <p>Создаём впечатление. И сайты, которые работают.</p>
+  <span>© <span data-year>2026</span> WEB STUDIO</span>
+  <a href="#top" class="back-top">Наверх ↑</a>
+</footer>
