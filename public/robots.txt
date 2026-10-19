@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kinodoc.github.io/web-studio/sitemap-index.xml
