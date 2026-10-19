@@ -14,18 +14,18 @@ const links = [
 <header class="site-header">
   <a class="brand" href={base} aria-label="Веб-студия — главная">
     <span class="brand-mark">W<span>·</span></span>
-    <span class="brand-name">WEB STUDIO<span>ДИЗАЙН · РАЗРАБОТКА</span></span>
+    <span class="brand-name">WEB STUDIO<span>ЦИФРОВЫЕ МИРЫ · ПРОДУКТЫ</span></span>
   </a>
   <button class="menu-toggle" data-menu-toggle aria-controls="site-navigation" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span></button>
   <nav class="nav" id="site-navigation" data-menu aria-label="Главная навигация">
     {links.map((link) => <a class:list={[{ 'nav-current': active === link.key }]} href={link.href} aria-current={active === link.key ? 'page' : undefined}>{link.label}</a>)}
-    <a class="nav-cta" href={base + 'contacts/'}>Обсудить проект <span>↗</span></a>
+    <a class="nav-cta" href={base + 'contacts/'}>Рассказать об идее <span>↗</span></a>
   </nav>
 </header>
 <slot />
 <footer class="footer section-shell">
-  <a class="brand" href={base} aria-label="Веб-студия — главная"><span class="brand-mark">W<span>·</span></span><span class="brand-name">WEB STUDIO<span>ДИЗАЙН · РАЗРАБОТКА</span></span></a>
-  <p>Создаём сайты, которые хочется показать.</p>
+  <a class="brand" href={base} aria-label="Веб-студия — главная"><span class="brand-mark">W<span>·</span></span><span class="brand-name">WEB STUDIO<span>ЦИФРОВЫЕ МИРЫ · ПРОДУКТЫ</span></span></a>
+  <p>Создаём цифровые продукты и вселенные для людей.</p>
   <span>© <span data-year>2026</span> Веб-студия</span>
   <a href="#top" class="back-top">Наверх ↑</a>
 </footer>
