@@ -210,6 +210,11 @@ export default {
       if (route === "/api/admin/login" && request.method === "POST") {
         const data = await body(request);
         const password = text(data.password, 1000);
+        const loginIp = request.headers.get("CF-Connecting-IP") || "unknown";
+        const loginIpHash = await sha256("admin-login-ip:" + loginIp);
+        await env.DB.prepare("INSERT INTO admin_login_attempts (ip_hash, window_started_at, attempts) VALUES (?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), 1) ON CONFLICT(ip_hash) DO UPDATE SET attempts = CASE WHEN window_started_at <= strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 minutes') THEN 1 ELSE attempts + 1 END, window_started_at = CASE WHEN window_started_at <= strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 minutes') THEN strftime('%Y-%m-%dT%H:%M:%fZ','now') ELSE window_started_at END").bind(loginIpHash).run();
+        const loginRate = await env.DB.prepare("SELECT attempts FROM admin_login_attempts WHERE ip_hash = ?").bind(loginIpHash).first<{ attempts: number }>();
+        if ((loginRate?.attempts || 0) > 8) return json({ error: "Too many login attempts. Wait five minutes and try again." }, 429, headers);
         if (!env.ADMIN_PASSWORD || !env.ADMIN_SESSION_SECRET || password !== env.ADMIN_PASSWORD) {
           return json({ error: "Invalid credentials" }, 401, headers);
         }
