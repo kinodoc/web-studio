@@ -1,15 +1,8 @@
 ---
 const { active = '' } = Astro.props;
 const base = import.meta.env.BASE_URL;
-const links = [
-  { label: 'Главная', href: base, key: 'home' },
-  { label: 'Услуги', href: base + 'services/', key: 'services' },
-  { label: 'Лендинги', href: base + 'services/landing/', key: 'landing' },
-  { label: 'Сайты-визитки', href: base + 'services/business-card/', key: 'business-card' },
-  { label: 'Корпоративные сайты', href: base + 'services/corporate/', key: 'corporate' },
-  { label: 'Индивидуальная разработка', href: base + 'services/custom/', key: 'custom' },
-  { label: 'Контакты', href: base + 'contacts/', key: 'contacts' },
-];
+import { navigationLinks } from '../data/navigation.js';
+const links = navigationLinks.map((link) => ({ ...link, href: base + link.path }));
 ---
 <header class="site-header">
   <a class="brand" href={base} aria-label="Веб-студия — главная">
