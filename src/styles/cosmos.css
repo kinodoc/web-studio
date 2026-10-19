@@ -334,3 +334,124 @@ body:not(.cosmos-home) .form-submit:disabled {
   opacity: 1;
   background: #b6d94a;
 }
+
+
+/* FINAL UI CONSISTENCY FIX — one brand mark and solid calls to action everywhere. */
+.cosmos-brand .brand-symbol,
+body:not(.cosmos-home) .brand-mark {
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(215,255,84,.65);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #d7ff54;
+  font-family: 'Onest', 'Manrope', Arial, sans-serif;
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -.1em;
+  opacity: 1;
+}
+.cosmos-brand .brand-symbol span,
+body:not(.cosmos-home) .brand-mark span {
+  color: #ff795f;
+}
+.cosmos-brand small,
+body:not(.cosmos-home) .brand-name span {
+  display: block;
+  margin-top: 5px;
+  color: #929b8b;
+  font-family: 'Manrope', Arial, sans-serif;
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  line-height: 1.4;
+}
+.cosmos-nav .nav-contact,
+body:not(.cosmos-home) .nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 42px;
+  padding: 11px 15px;
+  border: 1px solid #d7ff54;
+  border-radius: 0;
+  background: #d7ff54;
+  color: #10140a;
+  font-family: 'Manrope', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-decoration: none;
+  opacity: 1;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+.cosmos-nav .nav-contact span,
+body:not(.cosmos-home) .nav-cta span {
+  margin: 0;
+  padding: 0;
+  color: #10140a;
+  font-size: 16px;
+  line-height: 1;
+}
+.cosmos-nav .nav-contact:hover,
+body:not(.cosmos-home) .nav-cta:hover {
+  background: #f1f1e8;
+  border-color: #f1f1e8;
+  color: #10140a;
+  transform: translateY(-1px);
+}
+.cosmos-nav .nav-contact:hover span,
+body:not(.cosmos-home) .nav-cta:hover span {
+  color: #10140a;
+}
+body:not(.cosmos-home) .form-submit,
+body:not(.cosmos-home) .button-primary,
+.cosmos-home .cosmos-button {
+  opacity: 1;
+  background: #d7ff54;
+  border: 1px solid #d7ff54;
+  color: #10140a;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body:not(.cosmos-home) .form-submit span,
+body:not(.cosmos-home) .button-primary span,
+.cosmos-home .cosmos-button span {
+  color: #10140a;
+}
+body:not(.cosmos-home) .form-submit:disabled {
+  opacity: 1;
+  background: #b6d94a;
+  border-color: #b6d94a;
+}
+@media (max-width: 700px) {
+  .cosmos-brand .brand-symbol,
+  body:not(.cosmos-home) .brand-mark {
+    width: 35px;
+    height: 35px;
+    min-width: 35px;
+    font-size: 20px;
+  }
+  .cosmos-nav .nav-contact,
+  body:not(.cosmos-home) .nav-cta {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+}
