@@ -91,6 +91,8 @@ if (messageField && speechButton && speechButtonLabel && speechIndicator && spee
   } else {
     let recognition: SpeechRecognitionLike | null = null;
     let isListening = false;
+    let shouldContinue = false;
+    let restartTimer = 0;
     let baseText = '';
     let dictatedText = '';
 
@@ -100,55 +102,72 @@ if (messageField && speechButton && speechButtonLabel && speechIndicator && spee
       speechButton.classList.toggle('is-listening', listening);
       speechIndicator.classList.toggle('is-active', listening);
       speechButtonLabel.textContent = listening ? 'Остановить диктовку' : 'Надиктовать сообщение';
-      if (listening) {
-        speechHelp.textContent = 'Слушаем… Говорите естественно; нажмите кнопку ещё раз, чтобы остановить.';
-      } else if (speechHelp.textContent.startsWith('Слушаем')) {
-        speechHelp.textContent = 'Диктовка остановлена. Проверьте текст и при необходимости исправьте его.';
-      }
+      speechHelp.textContent = listening
+        ? 'Слушаем… Если браузер прервёт распознавание после паузы, диктовка продолжится автоматически.'
+        : 'Диктовка остановлена. Проверьте текст и при необходимости исправьте его.';
     };
 
-    speechButton.addEventListener('click', () => {
-      if (isListening) {
-        recognition?.stop();
-        return;
-      }
+    const startRecognition = () => {
+      if (!shouldContinue) return;
       try {
-        recognition = new SpeechRecognition();
-        recognition.lang = 'ru-RU';
-        recognition.interimResults = false;
-        recognition.continuous = true;
-        baseText = messageField.value.trim();
-        dictatedText = '';
-        recognition.onresult = (event) => {
+        const current = new SpeechRecognition();
+        recognition = current;
+        current.lang = 'ru-RU';
+        current.interimResults = false;
+        current.continuous = true;
+        current.onresult = (event) => {
           for (let i = event.resultIndex; i < event.results.length; i += 1) {
             const result = event.results[i];
-            if (result.isFinal) dictatedText += (dictatedText ? ' ' : '') + result[0].transcript.trim();
+            if (result.isFinal) {
+              const phrase = result[0].transcript.trim();
+              if (phrase) dictatedText += (dictatedText ? ' ' : '') + phrase;
+            }
           }
           const addition = dictatedText.trim();
           messageField.value = [baseText, addition].filter(Boolean).join(baseText && addition ? ' ' : '');
           messageField.dispatchEvent(new Event('input', { bubbles: true }));
         };
-        recognition.onerror = (event) => {
+        current.onerror = (event) => {
           const messages: Record<string, string> = {
-            'not-allowed': 'Браузер не разрешил доступ к микрофону. Проверьте разрешения сайта.',
-            'service-not-allowed': 'Сервис распознавания речи недоступен. Можно ввести текст вручную.',
-            'no-speech': 'Речь не обнаружена. Попробуйте ещё раз и говорите чуть громче.',
-            'network': 'Сервис распознавания недоступен из-за ошибки сети. Попробуйте позже.',
-            'audio-capture': 'Не удалось найти или включить микрофон.'
+            'not-allowed': 'Разрешите доступ к микрофону в настройках браузера.',
+            'service-not-allowed': 'Распознавание речи недоступно. Можно ввести текст вручную.',
+            'no-speech': 'Речь не обнаружена. Начните говорить, когда будете готовы.',
+            'network': 'Не удалось связаться с сервисом распознавания. Попробуйте позже.',
+            'audio-capture': 'Не удалось включить микрофон.'
           };
           if (event.error !== 'aborted') speechHelp.textContent = messages[event.error] || 'Не удалось распознать речь. Попробуйте ещё раз или введите текст вручную.';
+          if (['not-allowed', 'service-not-allowed', 'network', 'audio-capture'].includes(event.error)) shouldContinue = false;
         };
-        recognition.onend = () => {
-          setListeningState(false);
-          recognition = null;
+        current.onend = () => {
+          if (recognition === current) recognition = null;
+          if (shouldContinue) {
+            restartTimer = window.setTimeout(startRecognition, 300);
+          } else {
+            window.clearTimeout(restartTimer);
+            setListeningState(false);
+          }
         };
-        recognition.start();
-        setListeningState(true);
+        current.start();
       } catch {
-        setListeningState(false);
+        shouldContinue = false;
         recognition = null;
+        setListeningState(false);
         speechHelp.textContent = 'Не удалось запустить диктовку. Проверьте разрешение на микрофон или введите текст вручную.';
       }
+    };
+
+    speechButton.addEventListener('click', () => {
+      if (isListening) {
+        shouldContinue = false;
+        window.clearTimeout(restartTimer);
+        recognition?.stop();
+        return;
+      }
+      baseText = messageField.value.trim();
+      dictatedText = '';
+      shouldContinue = true;
+      setListeningState(true);
+      startRecognition();
     });
   }
 }
