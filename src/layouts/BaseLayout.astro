@@ -25,9 +25,9 @@ import '../styles/cosmos.css';
 <body class={pageClass}>
 <a class="skip-link" href="#top">Перейти к содержимому</a>
 <slot />
-<script>
+<script is:inline>
 document.documentElement.classList.add('js-enabled');
-const menuToggles = document.querySelectorAll<HTMLButtonElement>('[data-menu-toggle]');
+const menuToggles = document.querySelectorAll('[data-menu-toggle]');
 menuToggles.forEach((toggle) => {
   const menuId = toggle.getAttribute('aria-controls');
   const menu = menuId ? document.getElementById(menuId) : null;
@@ -64,7 +64,7 @@ if ('IntersectionObserver' in window) {
 }
 const year = document.querySelector('[data-year]');
 if (year) year.textContent = String(new Date().getFullYear());
-const pointer = document.querySelector<HTMLElement>('.cursor-glow');
+const pointer = document.querySelector('.cursor-glow');
 if (pointer && matchMedia('(pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   window.addEventListener('pointermove', (event) => {
     pointer.style.setProperty('--px', event.clientX + 'px');
