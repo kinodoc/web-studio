@@ -1,5 +1,5 @@
 ---
-const { title = 'Веб-студия — сайты, которые производят впечатление', description = 'Разработка сайтов для бизнеса: сайты-визитки от 10 000 ₽, лендинги от 15 000 ₽ и корпоративные проекты. Дизайн, разработка и техническая SEO-основа.', canonical = 'https://kinodoc.github.io/web-studio/' } = Astro.props;
+const { title = 'Веб-студия — сайты, которые производят впечатление', description = 'Разработка сайтов для бизнеса: сайты-визитки от 10 000 ₽, лендинги от 15 000 ₽ и корпоративные проекты. Дизайн, разработка и техническая SEO-основа.', canonical = 'https://kinodoc.github.io/web-studio/', pageClass = '' } = Astro.props;
 import '../styles/global.css';
 ---
 <!doctype html>
@@ -20,7 +20,7 @@ import '../styles/global.css';
 <title>{title}</title>
 <script type="application/ld+json" set:html={JSON.stringify({'@context':'https://schema.org','@type':'ProfessionalService',name:'WEB STUDIO',description,priceRange:'от 10 000 ₽',areaServed:{'@type':'Country',name:'Россия'},availableLanguage:['Russian']})} />
 </head>
-<body>
+<body class={pageClass}>
 <a class="skip-link" href="#top">Перейти к содержимому</a>
 <slot />
 <script>
