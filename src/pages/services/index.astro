@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteFrame from '../../components/SiteFrame.astro';
+const base = import.meta.env.BASE_URL;
+const title = 'Услуги веб-студии — WEB STUDIO';
+const description = 'Разработка лендингов, сайтов-визиток, корпоративных сайтов и индивидуальных веб-проектов. Понятный объём работ и прозрачная стоимость.';
+---
+<BaseLayout title={title} description={description} canonical="https://kinodoc.github.io/web-studio/services/">
+<SiteFrame active="services">
+<main id="top" class="inner-page section-shell">
+  <div class="page-hero" data-reveal><div class="section-kicker">[ УСЛУГИ / 01 ]</div><p class="page-overline">От задачи — к точному решению</p><h1>Не формат ради формата.<br /><em>Результат под задачу.</em></h1><p class="page-lead">Разбираемся, что должен сделать сайт для вашего бизнеса, и предлагаем подходящий формат. Без лишних функций, внезапных расходов и обещаний, которые невозможно гарантировать.</p><a class="button button-primary" href={base + 'contacts/'}>Обсудить задачу <span>↗</span></a></div>
+  <div class="service-detail-list">
+    <a class="detail-row" href={base + 'services/landing/'}><span class="detail-no">01</span><div><span class="service-tag">Для рекламы и конкретного предложения</span><h2>Лендинг</h2><p>Одна сфокусированная страница: ценность предложения, аргументы, ответы на сомнения и понятный путь к заявке.</p></div><strong>от 15 000 ₽</strong><span class="detail-arrow">↗</span></a>
+    <a class="detail-row" href={base + 'services/business-card/'}><span class="detail-no">02</span><div><span class="service-tag">Для специалиста и малого бизнеса</span><h2>Сайт-визитка</h2><p>Компактное представительство в сети: кто вы, что предлагаете, как связаться и почему вам можно доверять.</p></div><strong>от 10 000 ₽</strong><span class="detail-arrow">↗</span></a>
+    <a class="detail-row" href={base + 'services/corporate/'}><span class="detail-no">03</span><div><span class="service-tag">Для компании с несколькими направлениями</span><h2>Корпоративный сайт</h2><p>Структура для услуг, команды, преимуществ и полезных материалов — с возможностью расширять сайт по мере роста.</p></div><strong>от 30 000 ₽</strong><span class="detail-arrow">↗</span></a>
+    <a class="detail-row" href={base + 'services/custom/'}><span class="detail-no">04</span><div><span class="service-tag">Когда нужна особая логика</span><h2>Индивидуальная разработка</h2><p>Нестандартные интерфейсы, интерактивные элементы и функциональность, спроектированная под ваш процесс.</p></div><strong>по задаче</strong><span class="detail-arrow">↗</span></a>
+  </div>
+  <section class="page-band" data-reveal><div><div class="section-kicker">[ ЧТО ВХОДИТ ]</div><h2>Сначала ясность.<br /><em>Потом разработка.</em></h2></div><ul><li>Обсуждение цели и аудитории</li><li>Структура и визуальная концепция</li><li>Адаптивная реализация</li><li>Базовая техническая SEO-подготовка</li><li>Проверка и передача файлов</li></ul></section>
+  <section class="page-end"><p>Не уверены, какой формат подойдёт?</p><a class="underlined-link" href={base + 'contacts/'}>Расскажите о задаче — разберём вместе <span>↗</span></a></section>
+</main>
+</SiteFrame>
+</BaseLayout>
