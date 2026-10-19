@@ -15,8 +15,7 @@ const base = import.meta.env.BASE_URL;
 <input type="hidden" name="_subject" value="Новая заявка с сайта Веб-студия" />
 <input type="hidden" name="_template" value="table" />
 <div class="form-field"><label for="inquiry-name">Как к вам обращаться <span>*</span></label><input id="inquiry-name" name="name" type="text" autocomplete="name" maxlength="100" required placeholder="Ваше имя" /></div>
-<div class="form-field"><label for="inquiry-contact">Как с вами связаться <span>*</span></label><input id="inquiry-contact" name="contact" type="text" autocomplete="tel" maxlength="160" required placeholder="Телефон, мессенджер или почта" /></div>
-<div class="form-field"><label for="inquiry-email">Электронная почта <span class="field-optional">(необязательно)</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="адрес@почта.рф" /></div>
+<div class="form-field"><label for="inquiry-email">Электронная почта <span>*</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="160" required placeholder="адрес@почта.рф" /></div>
 <div class="form-field message-field"><label for="inquiry-message">Расскажите о проекте <span>*</span></label><textarea id="inquiry-message" name="message" rows="5" maxlength="5000" required placeholder="Что вы хотите создать? Каким должен быть этот цифровой мир?"></textarea></div>
 <div class="form-honeypot" aria-hidden="true"><label for="inquiry-company">Не заполняйте это поле</label><input id="inquiry-company" name="_honey" type="text" tabindex="-1" autocomplete="off" /></div>
 <label class="form-consent"><input type="checkbox" name="consent" value="yes" required /><span>Согласен(на) на обработку указанных данных, чтобы вы могли ответить на моё сообщение.</span></label>
@@ -48,7 +47,7 @@ if (form instanceof HTMLFormElement && status instanceof HTMLElement && submit i
         throw new Error('Submission failed');
       }
       form.reset();
-      status.textContent = 'Заявка отправлена. Спасибо! Мы свяжемся с вами по указанным контактам.';
+      status.textContent = 'Заявка отправлена. Спасибо! Мы ответим на указанную электронную почту.';
       status.className = 'form-status is-success';
     } catch {
       status.textContent = 'Не удалось отправить заявку. Попробуйте ещё раз позже или напишите на 79994528383@mail.ru.';
