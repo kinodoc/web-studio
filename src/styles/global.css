@@ -96,3 +96,18 @@ html.js-enabled [data-reveal]{opacity:0;transform:translateY(22px);transition:op
   .contact{width:100%;max-width:100%;margin-inline:0}
   .ticker-track{animation-duration:40s}
 }
+
+/* Factual proof points: no invented client counts or testimonials. */
+.hero-proof{gap:22px;align-items:stretch;flex-wrap:wrap}
+.proof-stat{display:flex;align-items:center;gap:9px;padding-right:20px;border-right:1px solid var(--line)}
+.proof-stat strong{font:500 24px var(--display);letter-spacing:-.06em;color:var(--acid)}
+.proof-stat span{font-size:9px;line-height:1.45;letter-spacing:.04em;color:var(--muted)}
+.proof-note{font-size:10px;line-height:1.55;color:var(--muted);align-self:center}
+.proof-note strong{font-size:11px;color:var(--text);font-weight:600}
+@media(max-width:640px){
+  .hero-proof{gap:13px;margin-top:34px}
+  .proof-stat{gap:6px;padding-right:12px}
+  .proof-stat strong{font-size:20px}
+  .proof-stat span{font-size:8px}
+  .proof-note{flex-basis:100%;padding-top:3px}
+}
