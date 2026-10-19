@@ -363,6 +363,9 @@ body:not(.cosmos-home) .brand-mark span {
   color: #ff795f;
 }
 .cosmos-brand small,
+body:not(.cosmos-home) .brand-name {
+  line-height: 1.2;
+}
 body:not(.cosmos-home) .brand-name span {
   display: block;
   margin-top: 5px;
