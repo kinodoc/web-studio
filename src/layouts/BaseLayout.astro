@@ -37,7 +37,7 @@ const reveal = new IntersectionObserver((entries) => entries.forEach((entry) => 
 document.querySelectorAll('[data-reveal]').forEach((node) => reveal.observe(node));
 const year = document.querySelector('[data-year]');
 if (year) year.textContent = String(new Date().getFullYear());
-const pointer = document.querySelector('.cursor-glow');
+const pointer = document.querySelector<HTMLElement>('.cursor-glow');
 if (pointer && matchMedia('(pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   window.addEventListener('pointermove', (event) => {
     pointer.style.setProperty('--px', event.clientX + 'px');
