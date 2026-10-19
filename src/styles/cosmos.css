@@ -302,3 +302,35 @@ body:not(.cosmos-home) .faq-list summary:focus-visible,body:not(.cosmos-home) .d
  body:not(.cosmos-home) .form-submit{max-width:none}
  body:not(.cosmos-home) .faq-section{padding-bottom:55px}
 }
+
+
+/* CTA contrast hardening: primary actions must never become translucent. */
+.cosmos-home .cosmos-button,
+body:not(.cosmos-home) .button-primary,
+body:not(.cosmos-home) .form-submit {
+  opacity: 1;
+  background-color: var(--cos-lime);
+  color: #10140a;
+  position: relative;
+  isolation: isolate;
+  z-index: 2;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.cosmos-home .cosmos-button {
+  background: #d7ff54;
+  color: #11150a;
+}
+.cosmos-home .cosmos-button-light {
+  background: #f1f1e8;
+  color: #10130c;
+}
+body:not(.cosmos-home) .button-primary:hover,
+body:not(.cosmos-home) .form-submit:hover {
+  background-color: #d7ff54;
+  color: #10140a;
+}
+body:not(.cosmos-home) .form-submit:disabled {
+  opacity: 1;
+  background: #b6d94a;
+}
