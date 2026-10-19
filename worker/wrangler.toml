@@ -1,0 +1,17 @@
+name = "web-studio-client-chat"
+main = "src/index.ts"
+compatibility_date = "2026-10-19"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "web-studio-chat"
+database_id = "4bd57984-20ad-410c-b948-a9f9327b83b4"
+
+[vars]
+ALLOWED_ORIGIN = "https://kinodoc.github.io"
+# Configure these as Worker secrets; never commit real values:
+# ADMIN_PASSWORD
+# ADMIN_SESSION_SECRET
+# RESEND_API_KEY
+# ADMIN_EMAIL
+# EMAIL_FROM

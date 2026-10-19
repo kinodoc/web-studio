@@ -1,0 +1,230 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const apiUrl = (import.meta.env.PUBLIC_CHAT_API_URL || '').replace(/\/$/, '');
+---
+<BaseLayout title="Административный чат — WEB STUDIO" description="Закрытая панель обработки обращений веб-студии." canonical="https://kinodoc.github.io/web-studio/admin-chat/" robots="noindex,nofollow,noarchive" pageClass="admin-chat-page">
+<main class="admin-shell" id="top" data-admin-chat data-api={apiUrl}>
+  <header class="admin-top"><a href={import.meta.env.BASE_URL} class="admin-brand">W<span>·</span> WEB STUDIO</a><span class="admin-label">PRIVATE / INBOX</span></header>
+  <section class="admin-login" data-admin-login-panel>
+    <p class="admin-kicker">[ ЗАКРЫТЫЙ ДОСТУП ]</p>
+    <h1>Вход в<br /><em>переписку.</em></h1>
+    <p class="admin-description">Панель для чтения обращений и ответов клиентам.</p>
+    <form data-admin-login-form>
+      <label for="admin-password">Пароль администратора</label>
+      <input id="admin-password" type="password" autocomplete="current-password" required />
+      <button type="submit" data-admin-login-button>Войти в чат <span>↗</span></button>
+    </form>
+    <p class="admin-notice" data-admin-login-status role="status"></p>
+  </section>
+  <section class="admin-workspace" data-admin-workspace hidden>
+    <aside class="admin-inbox">
+      <div class="admin-inbox-heading"><div><p class="admin-kicker">[ ОБРАЩЕНИЯ ]</p><h2>Входящие</h2></div><button type="button" data-admin-logout>Выйти</button></div>
+      <div class="admin-conversation-list" data-admin-conversations><p class="admin-empty">Загружаем переписки…</p></div>
+    </aside>
+    <section class="admin-thread">
+      <div class="admin-thread-heading"><p class="admin-kicker">[ ДИАЛОГ ]</p><h2 data-admin-thread-title>Выберите переписку</h2><p data-admin-thread-subtitle>Ответы отправляются прямо в чат на сайте.</p></div>
+      <div class="admin-thread-messages" data-admin-messages aria-live="polite"><p class="admin-empty">Выберите обращение слева.</p></div>
+      <form class="admin-reply" data-admin-reply-form>
+        <label class="admin-sr-only" for="admin-reply-input">Ответ клиенту</label>
+        <textarea id="admin-reply-input" data-admin-reply-input maxlength="5000" rows="2" placeholder="Напишите ответ…" required disabled></textarea>
+        <button type="submit" data-admin-reply-send disabled>Отправить <span>↑</span></button>
+      </form>
+      <p class="admin-notice" data-admin-status role="status"></p>
+    </section>
+  </section>
+  <footer class="admin-footer"><span>WEB STUDIO · CLIENT CARE</span><span>Сессия хранится только в этой вкладке браузера.</span></footer>
+</main>
+</BaseLayout>
+
+<style>
+.admin-chat-page{background:#f5f3ed;color:#171a22;min-height:100vh}.admin-chat-page .ws-chat{display:none}
+.admin-shell{--a-ink:#171a22;--a-muted:#696c78;--a-accent:#5d59d8;max-width:1440px;min-height:100vh;margin:0 auto;padding:24px clamp(16px,4vw,58px);display:flex;flex-direction:column;font-family:Manrope,Onest,system-ui,sans-serif}
+.admin-top{display:flex;align-items:center;justify-content:space-between;padding:10px 0 24px;border-bottom:1px solid rgba(23,26,34,.17)}.admin-brand{color:var(--a-ink);text-decoration:none;font-size:12px;font-weight:800;letter-spacing:.08em}.admin-brand span{color:var(--a-accent)}.admin-label,.admin-kicker{font-size:9px;letter-spacing:.15em;font-weight:800;color:var(--a-muted)}
+.admin-login{width:min(100%,440px);margin:auto;padding:64px 0}.admin-login h1{font-size:clamp(42px,7vw,68px);line-height:.98;letter-spacing:-.075em;font-weight:600;margin:18px 0}.admin-login h1 em{font-style:normal;color:var(--a-accent)}.admin-description{font-size:13px;line-height:1.8;color:var(--a-muted);max-width:360px;margin:0 0 32px}.admin-login form{display:grid;gap:10px}.admin-login label{font-size:11px;font-weight:700}.admin-login input{width:100%;padding:14px;border:1px solid rgba(23,26,34,.22);background:#fff;color:var(--a-ink);font:inherit;outline:none}.admin-login input:focus{border-color:var(--a-accent)}.admin-login form button,.admin-reply button{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 16px;background:var(--a-ink);color:#fff;border:0;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.admin-login button:disabled,.admin-reply button:disabled{opacity:.5;cursor:wait}
+.admin-workspace{display:grid;grid-template-columns:minmax(250px,350px) minmax(0,1fr);gap:22px;flex:1;min-height:0;padding:28px 0}.admin-workspace[hidden],.admin-login[hidden]{display:none}
+.admin-inbox,.admin-thread{min-width:0;border:1px solid rgba(23,26,34,.16);background:rgba(255,255,255,.58)}.admin-inbox{display:flex;flex-direction:column;min-height:480px}.admin-inbox-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px;border-bottom:1px solid rgba(23,26,34,.13)}.admin-inbox-heading h2,.admin-thread-heading h2{margin:6px 0;font-size:20px;letter-spacing:-.05em}.admin-inbox-heading button{padding:8px 10px;border:1px solid rgba(23,26,34,.2);background:transparent;font:inherit;font-size:10px;cursor:pointer}
+.admin-conversation-list{overflow:auto}.admin-conversation{display:block;width:100%;padding:15px 17px;border:0;border-bottom:1px solid rgba(23,26,34,.1);background:transparent;text-align:left;color:var(--a-ink);cursor:pointer}.admin-conversation:hover,.admin-conversation.is-selected{background:#eeecff}.admin-conversation.is-unread .admin-conversation-preview{font-weight:800}.admin-conversation-line{display:flex;align-items:center;justify-content:space-between;gap:10px}.admin-conversation-line strong{font-size:11px}.admin-conversation-line time{font-size:9px;color:var(--a-muted)}.admin-conversation-preview{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:7px;color:var(--a-muted);font-size:10px;line-height:1.5}.admin-unread{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--a-accent);margin-right:5px}
+.admin-thread{display:grid;grid-template-rows:auto minmax(180px,1fr) auto auto;min-height:480px}.admin-thread-heading{padding:19px 22px;border-bottom:1px solid rgba(23,26,34,.13)}.admin-thread-heading>p:last-child{margin:7px 0 0;font-size:10px;color:var(--a-muted)}.admin-thread-messages{padding:22px;overflow:auto;max-height:58vh;min-height:220px}.admin-message{max-width:80%;margin:0 0 12px;padding:12px 14px;background:#fff;border:1px solid rgba(23,26,34,.13);white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.65}.admin-message.admin{margin-left:auto;background:var(--a-accent);border-color:var(--a-accent);color:#fff}.admin-message time{display:block;margin-top:5px;font-size:9px;opacity:.65}.admin-empty{padding:18px;color:var(--a-muted);font-size:11px;line-height:1.7}
+.admin-reply{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:14px;border-top:1px solid rgba(23,26,34,.13);background:#fff}.admin-reply textarea{min-width:0;resize:vertical;padding:12px;border:1px solid rgba(23,26,34,.18);font:inherit;font-size:12px;line-height:1.5;outline:none}.admin-reply textarea:focus{border-color:var(--a-accent)}.admin-reply button{align-self:stretch;font-size:11px}.admin-notice{min-height:0;margin:0;padding:0 15px;color:#a13b38;font-size:10px}.admin-notice:not(:empty){padding-top:10px;padding-bottom:10px}.admin-footer{display:flex;justify-content:space-between;gap:14px;padding:18px 0 5px;color:var(--a-muted);font-size:9px;letter-spacing:.04em}.admin-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:760px){.admin-shell{padding:16px}.admin-workspace{grid-template-columns:1fr;gap:12px}.admin-inbox{min-height:0;max-height:250px}.admin-conversation-list{overflow:auto}.admin-thread{min-height:420px}.admin-thread-messages{max-height:none;min-height:180px}.admin-footer{flex-direction:column}.admin-reply{grid-template-columns:1fr}.admin-reply button{min-height:42px}}
+</style>
+
+<script>
+const adminRoot = document.querySelector('[data-admin-chat]');
+if (adminRoot instanceof HTMLElement && !adminRoot.dataset.initialized) {
+  adminRoot.dataset.initialized = 'true';
+  const api = (adminRoot.dataset.api || '').replace(/\/$/, '');
+  const loginPanel = adminRoot.querySelector('[data-admin-login-panel]');
+  const workspace = adminRoot.querySelector('[data-admin-workspace]');
+  const loginForm = adminRoot.querySelector('[data-admin-login-form]');
+  const passwordInput = adminRoot.querySelector('#admin-password');
+  const loginButton = adminRoot.querySelector('[data-admin-login-button]');
+  const loginStatus = adminRoot.querySelector('[data-admin-login-status]');
+  const conversationList = adminRoot.querySelector('[data-admin-conversations]');
+  const threadTitle = adminRoot.querySelector('[data-admin-thread-title]');
+  const threadSubtitle = adminRoot.querySelector('[data-admin-thread-subtitle]');
+  const threadMessages = adminRoot.querySelector('[data-admin-messages]');
+  const replyForm = adminRoot.querySelector('[data-admin-reply-form]');
+  const replyInput = adminRoot.querySelector('[data-admin-reply-input]');
+  const replyButton = adminRoot.querySelector('[data-admin-reply-send]');
+  const status = adminRoot.querySelector('[data-admin-status]');
+  const logout = adminRoot.querySelector('[data-admin-logout]');
+  type AdminConversation = { id: string; unread: number; createdAt: string; lastMessageAt: string; lastMessagePreview: string };
+  const tokenKey = 'webStudioAdminSessionV1';
+  let session = sessionStorage.getItem(tokenKey) || '';
+  let selectedConversation = '';
+  let conversations: AdminConversation[] = [];
+  let pollTimer = 0;
+  const setText = (node: Element | null, value: string) => { if (node instanceof HTMLElement) node.textContent = value; };
+  async function request(path: string, options: RequestInit = {}) {
+    const requestHeaders = new Headers(options.headers);
+    requestHeaders.set('Content-Type', 'application/json');
+    if (session) requestHeaders.set('Authorization', 'Bearer ' + session);
+    const response = await fetch(api + path, { ...options, headers: requestHeaders });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      if (response.status === 401) signOut(false);
+      throw new Error(result.error || 'Request failed');
+    }
+    return result;
+  }
+  function showWorkspace() {
+    if (loginPanel instanceof HTMLElement) loginPanel.hidden = true;
+    if (workspace instanceof HTMLElement) workspace.hidden = false;
+  }
+  function showLogin() {
+    if (loginPanel instanceof HTMLElement) loginPanel.hidden = false;
+    if (workspace instanceof HTMLElement) workspace.hidden = true;
+  }
+  function signOut(showMessage = true) {
+    session = '';
+    sessionStorage.removeItem(tokenKey);
+    if (pollTimer) window.clearInterval(pollTimer);
+    pollTimer = 0;
+    selectedConversation = '';
+    showLogin();
+    if (showMessage) setText(loginStatus, 'Вы вышли из панели.');
+  }
+  function renderConversations(items: AdminConversation[]) {
+    if (!(conversationList instanceof HTMLElement)) return;
+    conversations = items;
+    conversationList.replaceChildren();
+    if (!items.length) {
+      const empty = document.createElement('p');
+      empty.className = 'admin-empty';
+      empty.textContent = 'Пока нет обращений.';
+      conversationList.append(empty);
+      return;
+    }
+    for (const item of items) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'admin-conversation' + (item.id === selectedConversation ? ' is-selected' : '') + (item.unread ? ' is-unread' : '');
+      button.addEventListener('click', () => selectConversation(item.id));
+      const line = document.createElement('span');
+      line.className = 'admin-conversation-line';
+      const label = document.createElement('strong');
+      label.textContent = item.unread ? '● Новое сообщение' : 'Переписка';
+      const time = document.createElement('time');
+      const date = new Date(item.lastMessageAt || item.createdAt);
+      time.textContent = Number.isNaN(date.getTime()) ? '' : date.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      line.append(label, time);
+      const preview = document.createElement('span');
+      preview.className = 'admin-conversation-preview';
+      preview.textContent = item.lastMessagePreview || 'Новое обращение';
+      button.append(line, preview);
+      conversationList.append(button);
+    }
+  }
+  async function loadConversations() {
+    if (!session || !api) return;
+    const result = await request('/api/admin/conversations');
+    renderConversations(result.conversations || []);
+    if (selectedConversation && !conversations.some((item) => item.id === selectedConversation)) selectedConversation = '';
+    if (!selectedConversation && conversations.length) await selectConversation(conversations[0].id);
+  }
+  async function loadMessages() {
+    if (!session || !selectedConversation || !api || !(threadMessages instanceof HTMLElement)) return;
+    const result = await request('/api/admin/messages?conversationId=' + encodeURIComponent(selectedConversation));
+    threadMessages.replaceChildren();
+    for (const item of result.messages || []) {
+      const bubble = document.createElement('article');
+      bubble.className = 'admin-message ' + (item.sender === 'admin' ? 'admin' : 'client');
+      const body = document.createElement('div');
+      body.textContent = item.body;
+      const time = document.createElement('time');
+      const date = new Date(item.createdAt);
+      time.textContent = date.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      bubble.append(body, time);
+      threadMessages.append(bubble);
+    }
+    threadMessages.scrollTop = threadMessages.scrollHeight;
+    const item = conversations.find((conversation) => conversation.id === selectedConversation);
+    setText(threadTitle, item ? 'Переписка с клиентом' : 'Переписка');
+    setText(threadSubtitle, item ? 'Последнее сообщение: ' + (item.lastMessagePreview || '—') : 'Ответы отправляются прямо в чат на сайте.');
+    if (replyInput instanceof HTMLTextAreaElement) replyInput.disabled = false;
+    if (replyButton instanceof HTMLButtonElement) replyButton.disabled = false;
+  }
+  async function selectConversation(id: string) {
+    selectedConversation = id;
+    if (replyInput instanceof HTMLTextAreaElement) replyInput.disabled = true;
+    if (replyButton instanceof HTMLButtonElement) replyButton.disabled = true;
+    await loadConversations();
+    await loadMessages();
+  }
+  async function signIn(password: string) {
+    if (!api) throw new Error('Адрес API не настроен. Чат пока не подключён.');
+    const response = await fetch(api + '/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || 'Не удалось войти.');
+    session = result.token;
+    sessionStorage.setItem(tokenKey, session);
+    showWorkspace();
+    await loadConversations();
+    if (!pollTimer) pollTimer = window.setInterval(() => {
+      loadConversations().then(loadMessages).catch((error) => setText(status, error.message));
+    }, 5000);
+  }
+  loginForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!(passwordInput instanceof HTMLInputElement) || !(loginButton instanceof HTMLButtonElement)) return;
+    loginButton.disabled = true;
+    setText(loginStatus, '');
+    try {
+      await signIn(passwordInput.value);
+      passwordInput.value = '';
+    } catch (error) {
+      setText(loginStatus, error instanceof Error ? error.message : 'Ошибка входа.');
+    } finally {
+      loginButton.disabled = false;
+    }
+  });
+  replyForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!(replyInput instanceof HTMLTextAreaElement) || !(replyButton instanceof HTMLButtonElement) || !selectedConversation) return;
+    const message = replyInput.value.trim();
+    if (!message) return;
+    replyButton.disabled = true;
+    setText(status, '');
+    try {
+      await request('/api/admin/messages', { method: 'POST', body: JSON.stringify({ conversationId: selectedConversation, message }) });
+      replyInput.value = '';
+      await loadConversations();
+      await loadMessages();
+    } catch (error) {
+      setText(status, error instanceof Error ? error.message : 'Не удалось отправить ответ.');
+    } finally {
+      replyButton.disabled = false;
+    }
+  });
+  logout?.addEventListener('click', () => signOut());
+  if (session && api) {
+    showWorkspace();
+    loadConversations().then(() => {
+      if (!pollTimer) pollTimer = window.setInterval(() => loadConversations().then(loadMessages).catch((error) => setText(status, error.message)), 5000);
+    }).catch(() => signOut(false));
+  } else {
+    showLogin();
+  }
+}
+</script>

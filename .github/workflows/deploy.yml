@@ -2,6 +2,8 @@ name: Build, audit and deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -10,12 +12,14 @@ permissions:
   id-token: write
 
 concurrency:
-  group: github-pages
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PUBLIC_CHAT_API_URL: ${{ vars.PUBLIC_CHAT_API_URL }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -26,6 +30,8 @@ jobs:
         run: npm ci
       - name: Security audit
         run: npm audit --audit-level=low
+      - name: Type-check Cloudflare Worker
+        run: npx tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,WebWorker worker/src/index.ts
       - name: Astro diagnostics
         run: npm run check
       - name: Production build
@@ -45,6 +51,7 @@ jobs:
           path: dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

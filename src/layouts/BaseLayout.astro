@@ -1,8 +1,9 @@
 ---
-const { title = 'WEB STUDIO — цифровые миры, созданные для людей', description = 'Создаём цифровые продукты и сайты: личный сайт от 15 000 ₽, одностраничный сайт от 20 000 ₽, многостраничный сайт от 40 000 ₽, интерактивный визуальный проект от 30 000 ₽.', canonical = 'https://kinodoc.github.io/web-studio/', pageClass = '' } = Astro.props;
+const { title = 'WEB STUDIO — цифровые миры, созданные для людей', description = 'Создаём цифровые продукты и сайты: личный сайт от 15 000 ₽, одностраничный сайт от 20 000 ₽, многостраничный сайт от 40 000 ₽, интерактивный визуальный проект от 30 000 ₽.', canonical = 'https://kinodoc.github.io/web-studio/', pageClass = '', robots = 'index,follow,max-image-preview:large' } = Astro.props;
 import '../styles/global.css';
 import '../styles/design-system.css';
 import '../styles/cosmos.css';
+import ChatWidget from '../components/ChatWidget.astro';
 ---
 <!doctype html>
 <html lang="ru">
@@ -14,7 +15,7 @@ import '../styles/cosmos.css';
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <meta name="theme-color" content="#090a0b" />
 <meta name="description" content={description} />
-<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="robots" content={robots} />
 <link rel="canonical" href={canonical} />
 <link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + 'favicon.svg'} />
 <meta property="og:type" content="website" /><meta property="og:locale" content="ru_RU" />
@@ -25,6 +26,7 @@ import '../styles/cosmos.css';
 <body class={pageClass}>
 <a class="skip-link" href="#top">Перейти к содержимому</a>
 <slot />
+<ChatWidget />
 <script is:inline>
 document.documentElement.classList.add('js-enabled');
 const menuToggles = document.querySelectorAll('[data-menu-toggle]');
