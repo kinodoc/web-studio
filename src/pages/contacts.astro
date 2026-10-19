@@ -7,6 +7,56 @@ const base = import.meta.env.BASE_URL;
 <SiteFrame active="contacts"><main id="top" class="inner-page section-shell contacts-page">
 <div class="page-hero" data-reveal><div class="section-kicker">[ КОНТАКТЫ / 01 ]</div><p class="page-overline">Любой большой проект начинается с разговора</p><h1>Расскажите,<br />что хотите <em>создать.</em></h1><p class="page-lead">Не обязательно приходить с готовым техническим заданием. Достаточно описать идею, бизнес и то, что сайт должен изменить. Поможем определить подходящий формат и следующий шаг.</p></div>
 <div class="contact-methods"><article><span class="section-kicker">[ 01 — ИДЕЯ ]</span><h2>Что хотите получить?</h2><p>Новый сайт, обновление старого, отдельную посадочную страницу или необычный интерактивный проект — опишите, что сейчас нужно бизнесу.</p></article><article><span class="section-kicker">[ 02 — ФОРМАТ ]</span><h2>Что уже известно?</h2><p>Можно приложить ссылку на текущий сайт, примеры, список услуг или просто набросать мысли. Материалы необязательно должны быть идеальными.</p></article><article><span class="section-kicker">[ 03 — СЛЕДУЮЩИЙ ШАГ ]</span><h2>Согласуем план</h2><p>После обсуждения определим объём работ, ориентир по стоимости и сроки. Начинаем только после согласования условий.</p></article></div>
-<section class="contact-panel"><div class="section-kicker">[ НАПИСАТЬ НАМ ]</div><h2>Давайте начнём<br /><em>с вашей идеи.</em></h2><p>Контактный адрес нужно указать перед публикацией сайта.</p><p class="contact-note">Сейчас здесь не размещаем фиктивный адрес или форму, которая никуда не отправляет данные.</p></section>
+<section class="contact-panel" id="contact-form">
+<div class="section-kicker">[ НАПИСАТЬ НАМ ]</div>
+<h2>Давайте начнём<br /><em>с вашей идеи.</em></h2>
+<p>Заполните форму — сообщение придёт на электронную почту WEB STUDIO. MAX пока не подключён.</p>
+<form class="inquiry-form" id="inquiry-form" action="https://formsubmit.co/ajax/79994528383@mail.ru" method="POST">
+<input type="hidden" name="_subject" value="Новая заявка с сайта WEB STUDIO" />
+<input type="hidden" name="_template" value="table" />
+<div class="form-field"><label for="inquiry-name">Как к вам обращаться <span>*</span></label><input id="inquiry-name" name="name" type="text" autocomplete="name" maxlength="100" required placeholder="Ваше имя" /></div>
+<div class="form-field"><label for="inquiry-contact">Телефон или другой способ связи <span>*</span></label><input id="inquiry-contact" name="contact" type="text" autocomplete="tel" maxlength="160" required placeholder="Телефон, Telegram или e-mail" /></div>
+<div class="form-field"><label for="inquiry-email">Электронная почта <span class="field-optional">(необязательно)</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="name@example.com" /></div>
+<div class="form-field"><label for="inquiry-message">Расскажите о проекте <span>*</span></label><textarea id="inquiry-message" name="message" rows="5" maxlength="5000" required placeholder="Какой сайт нужен и чем он должен помочь?"></textarea></div>
+<div class="form-honeypot" aria-hidden="true"><label for="inquiry-company">Не заполняйте это поле</label><input id="inquiry-company" name="_honey" type="text" tabindex="-1" autocomplete="off" /></div>
+<label class="form-consent"><input type="checkbox" name="consent" value="yes" required /><span>Согласен(на) на передачу указанных данных через сервис FormSubmit для обработки заявки и ответа на неё.</span></label>
+<button class="form-submit" id="inquiry-submit" type="submit">Отправить заявку <span>↗</span></button>
+<p class="form-status" id="inquiry-status" role="status" aria-live="polite"></p>
+<p class="contact-note">Форма отправляет данные через внешний сервис FormSubmit. При первой отправке сервис может попросить подтвердить адрес получателя по письму.</p>
+</form>
+</section>
 <section class="page-end"><p>Пока выбираете формат?</p><a class="underlined-link" href={base + 'services/'}>Посмотреть услуги и цены <span>↗</span></a></section>
+<script>
+const form = document.querySelector('#inquiry-form');
+const status = document.querySelector('#inquiry-status');
+const submit = document.querySelector('#inquiry-submit');
+if (form instanceof HTMLFormElement && status instanceof HTMLElement && submit instanceof HTMLButtonElement) {
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+    status.textContent = 'Отправляем заявку…';
+    status.className = 'form-status is-pending';
+    submit.disabled = true;
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      });
+      const result = await response.json();
+      if (!response.ok || result.success !== 'true' && result.success !== true) {
+        throw new Error('Submission failed');
+      }
+      form.reset();
+      status.textContent = 'Заявка отправлена. Спасибо! Мы свяжемся с вами по указанным контактам.';
+      status.className = 'form-status is-success';
+    } catch {
+      status.textContent = 'Не удалось отправить заявку. Попробуйте ещё раз позже или напишите на 79994528383@mail.ru.';
+      status.className = 'form-status is-error';
+    } finally {
+      submit.disabled = false;
+    }
+  });
+}
+</script>
 </main></SiteFrame></BaseLayout>
