@@ -1,5 +1,5 @@
 /* WEB STUDIO — COSMOS / full visual system */
-:root{color-scheme:dark;--cos-bg:#070908;--cos-panel:#101310;--cos-paper:#f1f1e8;--cos-muted:#a0a69a;--cos-line:rgba(230,241,218,.17);--cos-lime:#d7ff54;--cos-orange:#ff795f;--cos-shell:min(1320px,calc(100% - 96px)}
+:root{color-scheme:dark;--cos-bg:#070908;--cos-panel:#101310;--cos-paper:#f1f1e8;--cos-muted:#a0a69a;--cos-line:rgba(230,241,218,.17);--cos-lime:#d7ff54;--cos-orange:#ff795f;--cos-shell:min(1320px,calc(100% - 96px))}
 html{background:var(--cos-bg);color:var(--cos-paper);scroll-behavior:smooth;scroll-padding-top:90px;overflow-x:clip}
 body.cosmos-home{margin:0;background:var(--cos-bg);color:var(--cos-paper);font-family:'Manrope',Arial,sans-serif;font-size:14px;line-height:1.65;overflow-x:clip}
 body.cosmos-home:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");mix-blend-mode:soft-light}
@@ -138,7 +138,7 @@ body.cosmos-home .cosmos-header,body.cosmos-home .cosmos-main,body.cosmos-home .
 html.js-enabled body.cosmos-home [data-reveal]{opacity:1;transform:none}
 .cosmos-home a:focus-visible,.cosmos-home button:focus-visible{outline:2px solid var(--cos-lime);outline-offset:4px}
 @media(max-width:1050px){
- :root{--cos-shell:min(100% - 56px,900px)}
+ :root{--cos-shell:min(calc(100% - 56px),900px)}
  .cosmos-header{height:78px}.cosmos-hero{height:auto;min-height:740px}.hero-content{padding-top:150px}.cosmos-hero h1{font-size:clamp(66px,10vw,108px)}.hero-vignette{background:linear-gradient(90deg,rgba(7,9,8,.96),rgba(7,9,8,.72) 45%,rgba(7,9,8,.2)),linear-gradient(0deg,#070908,transparent 25%,transparent 85%,#07090855)}
  .label-left{left:56%;top:22%}.hero-bottomline{gap:25px}.work-grid{gap:12px}.architecture-scene,.culture-scene,.product-scene{height:290px}.work-card{padding:10px}.product-interface{top:19%;bottom:14%}.manifesto-layout{gap:8%}
 }
