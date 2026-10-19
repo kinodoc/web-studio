@@ -176,7 +176,7 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
   }
   async function loadMessages() {
     if (!api || !conversationId) return;
-    const result = await request('/api/client/messages?token=' + encodeURIComponent(token) + '&conversationId=' + encodeURIComponent(conversationId));
+    const result = await request('/api/client/messages?conversationId=' + encodeURIComponent(conversationId), { headers: { Authorization: 'Bearer ' + token } });
     render(result.messages || []);
   }
   function startPolling() {
