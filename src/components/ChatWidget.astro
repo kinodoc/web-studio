@@ -116,7 +116,7 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
     localStorage.setItem(tokenKey, token);
   }
   let conversationId = localStorage.getItem(conversationKey) || '';
-  let polling = null;
+  let polling: number | null = null;
   let sending = false;
   const setStatus = (message = '') => { if (status) status.textContent = message; };
   const openPanel = () => {
@@ -141,8 +141,10 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
     if (polling) window.clearInterval(polling);
     polling = null;
   };
-  const request = async (path, options = {}) => {
-    const response = await fetch(api + path, { ...options, headers: { 'Content-Type': 'application/json', ...(options.headers || {}) } });
+  const request = async (path: string, options: RequestInit = {}) => {
+    const requestHeaders = new Headers(options.headers);
+    requestHeaders.set('Content-Type', 'application/json');
+    const response = await fetch(api + path, { ...options, headers: requestHeaders });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || 'Request failed');
     return result;
@@ -153,7 +155,7 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
     conversationId = result.conversationId;
     localStorage.setItem(conversationKey, conversationId);
   }
-  function render(items) {
+  function render(items: Array<{ id: string; sender: string; body: string; createdAt: string }>) {
     if (!(messages instanceof HTMLElement)) return;
     const previousWelcome = messages.querySelector('[data-chat-welcome]');
     if (previousWelcome && items.length) previousWelcome.remove();
@@ -183,7 +185,7 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
     if (polling || !api) return;
     polling = window.setInterval(() => loadMessages().catch(() => {}), 5000);
   }
-  async function sendMessage(message) {
+  async function sendMessage(message: string) {
     if (!api || sending) return;
     sending = true;
     if (send instanceof HTMLButtonElement) send.disabled = true;
@@ -265,8 +267,10 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
   closer?.addEventListener('click', closePanel);
   expand?.addEventListener('click', () => {
     const expanded = root.classList.toggle('is-expanded');
-    expand.setAttribute('aria-label', expanded ? 'Уменьшить чат' : 'Развернуть чат');
-    expand.title = expanded ? 'Уменьшить чат' : 'Развернуть чат';
+    if (expand instanceof HTMLButtonElement) {
+      expand.setAttribute('aria-label', expanded ? 'Уменьшить чат' : 'Развернуть чат');
+      expand.title = expanded ? 'Уменьшить чат' : 'Развернуть чат';
+    }
   });
   form?.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -282,9 +286,10 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
     }
   }));
   input?.addEventListener('keydown', (event) => {
+    if (!(event instanceof KeyboardEvent)) return;
     if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
       event.preventDefault();
-      form?.requestSubmit();
+      if (form instanceof HTMLFormElement) form.requestSubmit();
     }
   });
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && root.classList.contains('is-open')) closePanel(); });
