@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteFrame from '../components/SiteFrame.astro';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Контакты — обсудить сайт | WEB STUDIO" description="Расскажите о задаче и получите понятный следующий шаг: формат сайта, примерный объём работ и что потребуется для старта." canonical="https://kinodoc.github.io/web-studio/contacts/">
+<SiteFrame active="contacts"><main id="top" class="inner-page section-shell contacts-page">
+<div class="page-hero" data-reveal><div class="section-kicker">[ КОНТАКТЫ / 01 ]</div><p class="page-overline">Любой большой проект начинается с разговора</p><h1>Расскажите,<br />что хотите <em>создать.</em></h1><p class="page-lead">Не обязательно приходить с готовым техническим заданием. Достаточно описать идею, бизнес и то, что сайт должен изменить. Поможем определить подходящий формат и следующий шаг.</p></div>
+<div class="contact-methods"><article><span class="section-kicker">[ 01 — ИДЕЯ ]</span><h2>Что хотите получить?</h2><p>Новый сайт, обновление старого, отдельную посадочную страницу или необычный интерактивный проект — опишите, что сейчас нужно бизнесу.</p></article><article><span class="section-kicker">[ 02 — ФОРМАТ ]</span><h2>Что уже известно?</h2><p>Можно приложить ссылку на текущий сайт, примеры, список услуг или просто набросать мысли. Материалы необязательно должны быть идеальными.</p></article><article><span class="section-kicker">[ 03 — СЛЕДУЮЩИЙ ШАГ ]</span><h2>Согласуем план</h2><p>После обсуждения определим объём работ, ориентир по стоимости и сроки. Начинаем только после согласования условий.</p></article></div>
+<section class="contact-panel"><div class="section-kicker">[ НАПИСАТЬ НАМ ]</div><h2>Давайте начнём<br /><em>с вашей идеи.</em></h2><p>Контактный адрес нужно указать перед публикацией сайта.</p><p class="contact-note">Сейчас здесь не размещаем фиктивный адрес или форму, которая никуда не отправляет данные.</p></section>
+<section class="page-end"><p>Пока выбираете формат?</p><a class="underlined-link" href={base + 'services/'}>Посмотреть услуги и цены <span>↗</span></a></section>
+</main></SiteFrame></BaseLayout>
