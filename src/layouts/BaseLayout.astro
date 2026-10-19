@@ -3,6 +3,7 @@ const { title = 'WEB STUDIO — цифровые миры, созданные д
 import '../styles/global.css';
 import '../styles/design-system.css';
 import '../styles/cosmos.css';
+import ChatWidget from '../components/ChatWidget.astro';
 ---
 <!doctype html>
 <html lang="ru">
@@ -25,6 +26,7 @@ import '../styles/cosmos.css';
 <body class={pageClass}>
 <a class="skip-link" href="#top">Перейти к содержимому</a>
 <slot />
+<ChatWidget />
 <script is:inline>
 document.documentElement.classList.add('js-enabled');
 const menuToggles = document.querySelectorAll('[data-menu-toggle]');
