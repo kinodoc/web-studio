@@ -12,10 +12,16 @@ const apiUrl = (import.meta.env.PUBLIC_CHAT_API_URL || '').replace(/\/$/, '');
     <header class="ws-chat-head">
       <div class="ws-chat-identity"><span class="ws-chat-brand">W<span>·</span></span><div><strong>Обсудим вашу идею</strong><small><i></i> WEB STUDIO · САЙТЫ</small></div></div>
       <div class="ws-chat-head-actions">
+        <button type="button" data-chat-transfer-toggle aria-expanded="false" aria-label="Перенести переписку" title="Перенести переписку">⇄</button>
         <button type="button" data-chat-expand aria-label="Развернуть чат" title="Развернуть чат">⤢</button>
         <button type="button" data-chat-close aria-label="Свернуть чат" title="Свернуть чат">×</button>
       </div>
     </header>
+    <section class="ws-chat-transfer" data-chat-transfer-tools hidden aria-label="Перенос переписки">
+      <div class="ws-chat-transfer-block"><strong>Продолжить на другом устройстве</strong><p>Создайте одноразовый код здесь, затем введите его на втором устройстве. Код действует 5 минут.</p><button type="button" data-transfer-create>Получить код переноса</button><output data-transfer-output aria-live="polite"></output></div>
+      <div class="ws-chat-transfer-block"><label for="ws-chat-transfer-code">Уже есть код?</label><div class="ws-chat-transfer-claim"><input id="ws-chat-transfer-code" data-transfer-code inputmode="numeric" autocomplete="one-time-code" maxlength="3" placeholder="000" /><button type="button" data-transfer-claim>Продолжить</button></div></div>
+      <p class="ws-chat-transfer-status" data-transfer-status role="status" aria-live="polite"></p>
+    </section>
     <div class="ws-chat-messages" data-chat-messages aria-live="polite">
       <div class="ws-chat-welcome" data-chat-welcome>
         <span class="ws-chat-kicker">ВАША ИДЕЯ — НАЧАЛО</span>
