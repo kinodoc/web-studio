@@ -948,3 +948,39 @@ body.home-body .back-top{color:#5d59d8}
  body.home-body .footer{grid-template-columns:1fr}
  body.home-body .footer>span{text-align:left}
 }
+
+
+/* Keep the expanded multi-page navigation usable on tablets and small laptops. */
+@media (min-width: 641px) and (max-width: 900px) {
+  body:not(.cosmos-home) .site-header { height: 78px; }
+  body:not(.cosmos-home) .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 12px;
+    z-index: 12;
+  }
+  body:not(.cosmos-home) .menu-toggle span { width: 17px; height: 1px; background: var(--text); }
+  body:not(.cosmos-home) .nav {
+    display: none;
+    position: absolute;
+    top: 77px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: calc(100svh - 78px);
+    overflow-y: auto;
+    background: rgba(10, 14, 27, .98);
+    padding: 24px 20px;
+    border: 1px solid var(--line);
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 11;
+  }
+  body:not(.cosmos-home) .nav.is-open { display: flex; }
+  body:not(.cosmos-home) .nav a { font-size: 13px; }
+  body:not(.cosmos-home) .nav-cta { display: flex; justify-content: space-between; }
+}
