@@ -147,7 +147,7 @@ export default {
         ).bind(conversationId, tokenHash).first();
         if (!owner) return json({ error: "Conversation not found" }, 404, headers);
         const recent = await env.DB.prepare(
-          "SELECT COUNT(*) AS total FROM messages WHERE conversation_id = ? AND sender = 'client' AND created_at > datetime('now','-1 minute')"
+          "SELECT COUNT(*) AS total FROM messages WHERE conversation_id = ? AND sender = 'client' AND created_at > strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 minute')"
         ).bind(conversationId).first<{ total: number }>();
         if ((recent?.total || 0) >= 12) return json({ error: "Please wait a moment before sending more messages." }, 429, headers);
         const id = crypto.randomUUID();
