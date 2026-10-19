@@ -15,8 +15,8 @@ const base = import.meta.env.BASE_URL;
 <input type="hidden" name="_subject" value="Новая заявка с сайта Веб-студия" />
 <input type="hidden" name="_template" value="table" />
 <div class="form-field"><label for="inquiry-name">Как к вам обращаться <span>*</span></label><input id="inquiry-name" name="name" type="text" autocomplete="name" maxlength="100" required placeholder="Ваше имя" /></div>
-<div class="form-field"><label for="inquiry-contact">Телефон или другой способ связи <span>*</span></label><input id="inquiry-contact" name="contact" type="text" autocomplete="tel" maxlength="160" required placeholder="Телефон, Telegram или e-mail" /></div>
-<div class="form-field"><label for="inquiry-email">Электронная почта <span class="field-optional">(необязательно)</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="name@example.com" /></div>
+<div class="form-field"><label for="inquiry-contact">Телефон или другой способ связи <span>*</span></label><input id="inquiry-contact" name="contact" type="text" autocomplete="tel" maxlength="160" required placeholder="Телефон, мессенджер или почта" /></div>
+<div class="form-field"><label for="inquiry-email">Электронная почта <span class="field-optional">(необязательно)</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="адрес@почта.рф" /></div>
 <div class="form-field"><label for="inquiry-message">Расскажите о проекте <span>*</span></label><textarea id="inquiry-message" name="message" rows="5" maxlength="5000" required placeholder="Какой сайт нужен и чем он должен помочь?"></textarea></div>
 <div class="form-honeypot" aria-hidden="true"><label for="inquiry-company">Не заполняйте это поле</label><input id="inquiry-company" name="_honey" type="text" tabindex="-1" autocomplete="off" /></div>
 <label class="form-consent"><input type="checkbox" name="consent" value="yes" required /><span>Согласен(на) на обработку указанных данных для связи по моей заявке.</span></label>
