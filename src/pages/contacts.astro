@@ -65,125 +65,136 @@ const speechButtonLabel = document.querySelector<HTMLElement>('#speech-button-la
 const speechIndicator = document.querySelector<HTMLElement>('#speech-indicator');
 const speechHelp = document.querySelector<HTMLElement>('#speech-help');
 
-type SpeechResult = { isFinal: boolean; 0: { transcript: string } };
-type SpeechRecognitionLike = {
-  lang: string;
-  interimResults: boolean;
-  continuous: boolean;
-  onresult: ((event: { resultIndex: number; results: ArrayLike<SpeechResult> }) => void) | null;
-  onerror: ((event: { error: string }) => void) | null;
-  onend: (() => void) | null;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-};
-const speechWindow = window as unknown as {
-  SpeechRecognition?: new () => SpeechRecognitionLike;
-  webkitSpeechRecognition?: new () => SpeechRecognitionLike;
-};
-const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
-
 if (messageField && speechButton && speechButtonLabel && speechIndicator && speechHelp) {
-  if (!SpeechRecognition) {
-    speechButton.disabled = true;
-    speechButtonLabel.textContent = 'Диктовка недоступна';
-    speechHelp.textContent = 'Этот браузер не поддерживает распознавание речи. Вы можете заполнить поле обычным способом.';
-  } else {
-    let recognition: SpeechRecognitionLike | null = null;
-    let isListening = false;
-    let shouldContinue = false;
-    let restartTimer = 0;
-    let networkRetries = 0;
-    let lastError = '';
-    let baseText = '';
-    let dictatedText = '';
+  let recorder: MediaRecorder | null = null;
+  let stream: MediaStream | null = null;
+  let chunks: BlobPart[] = [];
+  let isRecording = false;
+  let isTranscribing = false;
+  let baseText = '';
+  let transcriberPromise: Promise<(audio: Float32Array, options?: Record<string, unknown>) => Promise<{ text: string }>> | null = null;
 
-    const setListeningState = (listening: boolean) => {
-      isListening = listening;
-      speechButton.setAttribute('aria-pressed', String(listening));
-      speechButton.classList.toggle('is-listening', listening);
-      speechIndicator.classList.toggle('is-active', listening);
-      speechButtonLabel.textContent = listening ? 'Остановить диктовку' : 'Надиктовать сообщение';
-      speechHelp.textContent = listening
-        ? 'Слушаем… Если браузер прервёт распознавание после паузы, диктовка продолжится автоматически.'
-        : 'Диктовка остановлена. Проверьте текст и при необходимости исправьте его.';
-    };
+  const setState = (state: 'idle' | 'recording' | 'transcribing') => {
+    isRecording = state === 'recording';
+    isTranscribing = state === 'transcribing';
+    speechButton.setAttribute('aria-pressed', String(isRecording));
+    speechButton.classList.toggle('is-listening', isRecording);
+    speechIndicator.classList.toggle('is-active', isRecording || isTranscribing);
+    speechButton.disabled = isTranscribing;
+    speechButtonLabel.textContent = state === 'recording'
+      ? 'Остановить и распознать'
+      : state === 'transcribing' ? 'Распознаём речь…' : 'Начать диктовку';
+  };
 
-    const startRecognition = () => {
-      if (!shouldContinue) return;
+  const getTranscriber = async () => {
+    if (!transcriberPromise) {
+      transcriberPromise = (async () => {
+        speechHelp.textContent = 'Подготавливаем распознавание на телефоне. При первом запуске потребуется загрузить модель; это может занять некоторое время.';
+        const dynamicImport = new Function('url', 'return import(url)') as (url: string) => Promise<{ pipeline: (task: string, model: string, options?: Record<string, unknown>) => Promise<(audio: Float32Array, options?: Record<string, unknown>) => Promise<{ text: string }>>; env: { allowLocalModels: boolean; useBrowserCache: boolean } }>;
+        const { pipeline, env } = await dynamicImport('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2');
+        env.allowLocalModels = false;
+        env.useBrowserCache = true;
+        return pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', {
+          device: 'wasm',
+          dtype: 'q8'
+        });
+      })().catch((error) => {
+        transcriberPromise = null;
+        throw error;
+      });
+    }
+    return transcriberPromise;
+  };
+
+  const transcribeRecording = async (blob: Blob) => {
+    if (!blob.size) {
+      speechHelp.textContent = 'Запись не получилась. Нажмите кнопку и попробуйте ещё раз.';
+      setState('idle');
+      return;
+    }
+    setState('transcribing');
+    try {
+      speechHelp.textContent = 'Обрабатываем запись на этом устройстве. Голосовой файл никуда не отправляется.';
+      const transcriber = await getTranscriber();
+      const AudioContextConstructor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextConstructor) throw new Error('AudioContext unavailable');
+      const audioContext = new AudioContextConstructor();
       try {
-        const current = new SpeechRecognition();
-        recognition = current;
-        current.lang = 'ru-RU';
-        current.interimResults = false;
-        current.continuous = true;
-        current.onresult = (event) => {
-          networkRetries = 0;
-          lastError = '';
-          for (let i = event.resultIndex; i < event.results.length; i += 1) {
-            const result = event.results[i];
-            if (result.isFinal) {
-              const phrase = result[0].transcript.trim();
-              if (phrase) dictatedText += (dictatedText ? ' ' : '') + phrase;
-            }
-          }
-          const addition = dictatedText.trim();
-          messageField.value = [baseText, addition].filter(Boolean).join(baseText && addition ? ' ' : '');
+        const decoded = await audioContext.decodeAudioData(await blob.arrayBuffer());
+        const targetLength = Math.ceil(decoded.duration * 16000);
+        const offline = new OfflineAudioContext(1, targetLength, 16000);
+        const source = offline.createBufferSource();
+        source.buffer = decoded;
+        source.connect(offline.destination);
+        source.start(0);
+        const resampled = await offline.startRendering();
+        const audio = resampled.getChannelData(0);
+        const result = await transcriber(audio, {
+          language: 'russian',
+          task: 'transcribe',
+          chunk_length_s: 30,
+          stride_length_s: 5
+        });
+        const phrase = result.text.trim();
+        if (phrase) {
+          const existing = baseText.trim();
+          messageField.value = [existing, phrase].filter(Boolean).join(existing ? ' ' : '');
           messageField.dispatchEvent(new Event('input', { bubbles: true }));
-        };
-        current.onerror = (event) => {
-          const messages: Record<string, string> = {
-            'not-allowed': 'Разрешите доступ к микрофону в настройках браузера.',
-            'service-not-allowed': 'Распознавание речи недоступно. Можно ввести текст вручную.',
-            'no-speech': 'Речь не обнаружена. Начните говорить, когда будете готовы.',
-            'network': 'Связь с сервисом распознавания прервалась. Пробуем восстановить диктовку…',
-            'audio-capture': 'Не удалось включить микрофон.'
-          };
-          lastError = event.error;
-          if (event.error !== 'aborted') speechHelp.textContent = messages[event.error] || 'Не удалось распознать речь. Попробуйте ещё раз или введите текст вручную.';
-          if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(event.error)) shouldContinue = false;
-        };
-        current.onend = () => {
-          if (recognition === current) recognition = null;
-          if (shouldContinue && lastError === 'network') {
-            networkRetries += 1;
-            if (networkRetries <= 4) {
-              restartTimer = window.setTimeout(startRecognition, networkRetries * 1000);
-            } else {
-              shouldContinue = false;
-              setListeningState(false);
-              speechHelp.textContent = 'Сервис распознавания не отвечает. Это ограничение браузера или сети. Попробуйте диктовку через микрофон клавиатуры телефона.';
-            }
-          } else if (shouldContinue) {
-            restartTimer = window.setTimeout(startRecognition, 300);
-          } else {
-            window.clearTimeout(restartTimer);
-            setListeningState(false);
-          }
-        };
-        current.start();
-      } catch {
-        shouldContinue = false;
-        recognition = null;
-        setListeningState(false);
-        speechHelp.textContent = 'Не удалось запустить диктовку. Проверьте разрешение на микрофон или введите текст вручную.';
+          speechHelp.textContent = 'Готово. Проверьте распознанный текст и при необходимости исправьте его. Запись обработана на телефоне.';
+        } else {
+          speechHelp.textContent = 'Не удалось разобрать речь. Попробуйте говорить чуть ближе к микрофону и отчётливее.';
+        }
+      } finally {
+        await audioContext.close();
       }
-    };
+    } catch (error) {
+      console.error('Local speech recognition failed:', error);
+      speechHelp.textContent = 'Не удалось запустить распознавание. Проверьте интернет для первой загрузки модели и свободное место на устройстве, затем попробуйте ещё раз.';
+    } finally {
+      stream?.getTracks().forEach((track) => track.stop());
+      stream = null;
+      recorder = null;
+      chunks = [];
+      setState('idle');
+    }
+  };
 
-    speechButton.addEventListener('click', () => {
-      if (isListening) {
-        shouldContinue = false;
-        window.clearTimeout(restartTimer);
-        recognition?.stop();
-        return;
-      }
+  speechButton.addEventListener('click', async () => {
+    if (isTranscribing) return;
+    if (isRecording && recorder) {
+      recorder.stop();
+      speechHelp.textContent = 'Запись остановлена. Сейчас преобразуем речь в текст на устройстве…';
+      return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+      speechHelp.textContent = 'Запись звука не поддерживается этим браузером. Попробуйте обновить браузер или ввести текст вручную.';
+      return;
+    }
+    try {
       baseText = messageField.value.trim();
-      dictatedText = '';
-      shouldContinue = true;
-      setListeningState(true);
-      startRecognition();
-    });
-  }
+      chunks = [];
+      stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].find((type) => MediaRecorder.isTypeSupported(type));
+      recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+      recorder.addEventListener('dataavailable', (event) => {
+        if (event.data.size) chunks.push(event.data);
+      });
+      recorder.addEventListener('stop', () => {
+        const recording = new Blob(chunks, { type: recorder?.mimeType || 'audio/webm' });
+        void transcribeRecording(recording);
+      }, { once: true });
+      recorder.start();
+      setState('recording');
+      speechHelp.textContent = 'Идёт запись. Говорите свободно, не торопясь. Нажмите эту же кнопку, когда закончите.';
+    } catch (error) {
+      console.error('Microphone start failed:', error);
+      stream?.getTracks().forEach((track) => track.stop());
+      stream = null;
+      recorder = null;
+      setState('idle');
+      speechHelp.textContent = 'Не удалось включить микрофон. Разрешите доступ к микрофону в настройках браузера и попробуйте снова.';
+    }
+  });
 }
 </script>
 <style>
