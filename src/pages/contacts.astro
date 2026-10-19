@@ -93,6 +93,8 @@ if (messageField && speechButton && speechButtonLabel && speechIndicator && spee
     let isListening = false;
     let shouldContinue = false;
     let restartTimer = 0;
+    let networkRetries = 0;
+    let lastError = '';
     let baseText = '';
     let dictatedText = '';
 
@@ -116,6 +118,8 @@ if (messageField && speechButton && speechButtonLabel && speechIndicator && spee
         current.interimResults = false;
         current.continuous = true;
         current.onresult = (event) => {
+          networkRetries = 0;
+          lastError = '';
           for (let i = event.resultIndex; i < event.results.length; i += 1) {
             const result = event.results[i];
             if (result.isFinal) {
@@ -135,12 +139,23 @@ if (messageField && speechButton && speechButtonLabel && speechIndicator && spee
             'network': 'Не удалось связаться с сервисом распознавания. Попробуйте позже.',
             'audio-capture': 'Не удалось включить микрофон.'
           };
+          lastError = event.error;
           if (event.error !== 'aborted') speechHelp.textContent = messages[event.error] || 'Не удалось распознать речь. Попробуйте ещё раз или введите текст вручную.';
-          if (['not-allowed', 'service-not-allowed', 'network', 'audio-capture'].includes(event.error)) shouldContinue = false;
+          if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(event.error)) shouldContinue = false;
+          if (event.error === 'network') speechHelp.textContent = 'Связь с сервисом распознавания прервалась. Пробуем восстановить диктовку…';
         };
         current.onend = () => {
           if (recognition === current) recognition = null;
-          if (shouldContinue) {
+          if (shouldContinue && lastError === 'network') {
+            networkRetries += 1;
+            if (networkRetries <= 4) {
+              restartTimer = window.setTimeout(startRecognition, networkRetries * 1000);
+            } else {
+              shouldContinue = false;
+              setListeningState(false);
+              speechHelp.textContent = 'Сервис распознавания не отвечает. Это ограничение браузера или сети. Попробуйте диктовку через микрофон клавиатуры телефона.';
+            }
+          } else if (shouldContinue) {
             restartTimer = window.setTimeout(startRecognition, 300);
           } else {
             window.clearTimeout(restartTimer);
