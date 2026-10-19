@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 const base = import.meta.env.BASE_URL;
 const services = [
-  { n: '01', title: 'Личный сайт', price: 'от 10 000 ₽', text: 'Ваше личное пространство в сети — с характером, историей и всем важным в одном месте.', href: 'business-card/' },
+  { n: '01', title: 'Личный сайт', price: 'от 10 000 ₽', text: 'Ваш собственный сайт — с характером, историей и всем важным в одном месте.', href: 'business-card/' },
   { n: '02', title: 'Одностраничный сайт', price: 'от 15 000 ₽', text: 'Цельный цифровой рассказ об идее, продукте или событии.', href: 'landing/' },
   { n: '03', title: 'Многостраничный сайт', price: 'от 30 000 ₽', text: 'Целая цифровая вселенная с разными разделами, историями и возможностями.', href: 'corporate/' },
   { n: '04', title: 'Индивидуальный проект', price: 'По задаче', text: 'Нестандартные цифровые продукты, интерактивные истории и миры, созданные вокруг вашей идеи.', href: 'custom/' }
@@ -54,7 +54,7 @@ const services = [
     <div class="section-meta"><span>04 / ЧТО МЫ ДЕЛАЕМ</span><span>ОТ ИДЕИ ДО ЗАПУСКА</span></div>
     <div class="services-heading"><h2>Идея становится<br><em>цифровой реальностью.</em></h2><p>Создаём сайты и цифровые продукты разного масштаба — от небольшого личного проекта до интерактивной вселенной. Обсуждаем идею, объём и стоимость до начала работы.</p></div>
     <div class="services-list">{services.map((service) => <a class="service-line" href={base + 'services/' + service.href}><span class="service-line-number">{service.n}</span><div class="service-line-main"><h3>{service.title}</h3><p>{service.text}</p></div><span class="service-line-price">{service.price}</span><span class="service-line-arrow">↗</span></a>)}</div>
-    <div class="services-note"><span>ЕСТЬ ИДЕЯ, НО НЕТ ФОРМАТА?</span><a href={base + 'contacts/'}>Вместе оживим идею <b>↗</b></a></div>
+    <div class="services-note"><span>ЕСТЬ ИДЕЯ, НО ЕЩЁ НЕ ЗНАЕТЕ, С ЧЕГО НАЧАТЬ?</span><a href={base + 'contacts/'}>Вместе оживим идею <b>↗</b></a></div>
   </section>
 
   <section class="statement-section"><div class="statement-orbit" aria-hidden="true"></div><div class="statement-inner cosmos-shell"><div class="section-meta"><span>05 / НАШ ПОДХОД</span><span>LESS NOISE. MORE MEANING.</span></div><p>Не собираем<br>страницы. <em>Создаём<br>целые миры.</em></p><div class="statement-bottom"><span>ДИЗАЙН / КОД / ДЕТАЛИ</span><p>Технологии оживляют идею, а дизайн помогает человеку почувствовать себя внутри цифрового мира — без лишнего шума и сложностей.</p></div></div></section>
