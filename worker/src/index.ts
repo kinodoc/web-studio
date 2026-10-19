@@ -107,8 +107,8 @@ export default {
         if (token.length < 32) return json({ error: "Invalid client token" }, 400, headers);
         const tokenHash = await sha256(token);
         const existing = await env.DB.prepare(
-          "SELECT id FROM conversations WHERE client_token_hash = ?"
-        ).bind(tokenHash).first<{ id: string }>();
+          "SELECT c.id FROM conversations c WHERE c.client_token_hash = ? OR EXISTS (SELECT 1 FROM client_devices d WHERE d.conversation_id = c.id AND d.token_hash = ?)"
+        ).bind(tokenHash, tokenHash).first<{ id: string }>();
         if (existing) return json({ conversationId: existing.id }, 200, headers);
         const id = crypto.randomUUID();
         await env.DB.prepare(
@@ -117,14 +117,58 @@ export default {
         return json({ conversationId: id }, 201, headers);
       }
 
+      // Create a short-lived, single-use code to move a conversation to another device.
+      if (route === "/api/client/transfer/create" && request.method === "POST") {
+        const data = await body(request);
+        const token = text(data.token, 200);
+        const conversationId = text(data.conversationId, 100);
+        if (token.length < 32 || !conversationId) return json({ error: "Missing conversation credentials" }, 400, headers);
+        const tokenHash = await sha256(token);
+        const owner = await env.DB.prepare("SELECT c.id FROM conversations c WHERE c.id = ? AND (c.client_token_hash = ? OR EXISTS (SELECT 1 FROM client_devices d WHERE d.conversation_id = c.id AND d.token_hash = ?))").bind(conversationId, tokenHash, tokenHash).first();
+        if (!owner) return json({ error: "Conversation not found" }, 404, headers);
+        await env.DB.prepare("DELETE FROM transfer_codes WHERE expires_at <= strftime('%Y-%m-%dT%H:%M:%fZ','now') OR used_at IS NOT NULL").run();
+        await env.DB.prepare("DELETE FROM transfer_codes WHERE conversation_id = ? AND used_at IS NULL").bind(conversationId).run();
+        for (let attempt = 0; attempt < 12; attempt++) {
+          const code = String(crypto.getRandomValues(new Uint16Array(1))[0] % 1000).padStart(3, "0");
+          const codeHash = await sign("transfer:" + code, env.ADMIN_SESSION_SECRET);
+          try {
+            await env.DB.prepare("INSERT INTO transfer_codes (code_hash, conversation_id, expires_at) VALUES (?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','+5 minutes'))").bind(codeHash, conversationId).run();
+            return json({ code, expiresInSeconds: 300 }, 201, headers);
+          } catch { /* Retry if another active conversation already has this code. */ }
+        }
+        return json({ error: "Could not create a transfer code. Please try again." }, 503, headers);
+      }
+
+      if (route === "/api/client/transfer/claim" && request.method === "POST") {
+        const data = await body(request);
+        const code = text(data.code, 3);
+        const token = text(data.token, 200);
+        if (!/^\d{3}$/.test(code) || token.length < 32) return json({ error: "Введите трёхзначный код." }, 400, headers);
+        const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+        const ipHash = await sha256("transfer-ip:" + ip);
+        await env.DB.prepare("INSERT INTO transfer_attempts (ip_hash, window_started_at, attempts) VALUES (?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), 1) ON CONFLICT(ip_hash) DO UPDATE SET attempts = CASE WHEN window_started_at <= strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 minutes') THEN 1 ELSE attempts + 1 END, window_started_at = CASE WHEN window_started_at <= strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 minutes') THEN strftime('%Y-%m-%dT%H:%M:%fZ','now') ELSE window_started_at END").bind(ipHash).run();
+        const rate = await env.DB.prepare("SELECT attempts FROM transfer_attempts WHERE ip_hash = ?").bind(ipHash).first<{ attempts: number }>();
+        if ((rate?.attempts || 0) > 8) return json({ error: "Слишком много попыток. Подождите пять минут и попробуйте снова." }, 429, headers);
+        const codeHash = await sign("transfer:" + code, env.ADMIN_SESSION_SECRET);
+        const tokenHash = await sha256(token);
+        const claimed = await env.DB.prepare("UPDATE transfer_codes SET used_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE code_hash = ? AND used_at IS NULL AND expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now') RETURNING conversation_id AS conversationId").bind(codeHash).first<{ conversationId: string }>();
+        if (!claimed) return json({ error: "Код недействителен, истёк или уже использован. Создайте новый на первом устройстве." }, 400, headers);
+        try {
+          await env.DB.prepare("INSERT INTO client_devices (token_hash, conversation_id) VALUES (?, ?)").bind(tokenHash, claimed.conversationId).run();
+        } catch {
+          return json({ error: "Не удалось привязать устройство. Создайте новый код и попробуйте ещё раз." }, 409, headers);
+        }
+        return json({ ok: true, conversationId: claimed.conversationId }, 200, headers);
+      }
+
       if (route === "/api/client/messages" && request.method === "GET") {
         const token = text(url.searchParams.get("token"), 200);
         const conversationId = text(url.searchParams.get("conversationId"), 100);
         if (token.length < 32 || !conversationId) return json({ error: "Missing conversation credentials" }, 400, headers);
         const tokenHash = await sha256(token);
         const owner = await env.DB.prepare(
-          "SELECT id FROM conversations WHERE id = ? AND client_token_hash = ?"
-        ).bind(conversationId, tokenHash).first();
+          "SELECT c.id FROM conversations c WHERE c.id = ? AND (c.client_token_hash = ? OR EXISTS (SELECT 1 FROM client_devices d WHERE d.conversation_id = c.id AND d.token_hash = ?))"
+        ).bind(conversationId, tokenHash, tokenHash).first();
         if (!owner) return json({ error: "Conversation not found" }, 404, headers);
         const result = await env.DB.prepare(
           "SELECT id, sender, body, created_at AS createdAt FROM messages WHERE conversation_id = ? ORDER BY created_at ASC LIMIT 500"
@@ -143,8 +187,8 @@ export default {
         if (token.length < 32 || !conversationId || !message) return json({ error: "Message and conversation credentials are required" }, 400, headers);
         const tokenHash = await sha256(token);
         const owner = await env.DB.prepare(
-          "SELECT id FROM conversations WHERE id = ? AND client_token_hash = ?"
-        ).bind(conversationId, tokenHash).first();
+          "SELECT c.id FROM conversations c WHERE c.id = ? AND (c.client_token_hash = ? OR EXISTS (SELECT 1 FROM client_devices d WHERE d.conversation_id = c.id AND d.token_hash = ?))"
+        ).bind(conversationId, tokenHash, tokenHash).first();
         if (!owner) return json({ error: "Conversation not found" }, 404, headers);
         const recent = await env.DB.prepare(
           "SELECT COUNT(*) AS total FROM messages WHERE conversation_id = ? AND sender = 'client' AND created_at > strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 minute')"
