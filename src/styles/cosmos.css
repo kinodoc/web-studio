@@ -164,3 +164,141 @@ html.js-enabled body.cosmos-home [data-reveal]{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
  html{scroll-behavior:auto}.signal-track,.big-asterisk{animation:none!important}.cosmos-home *,body.cosmos-home *:before,body.cosmos-home *:after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
 }
+
+
+/* COSMOS INNER PAGES — shared visual language */
+body:not(.cosmos-home){background:#080a08;color:var(--cos-paper);background-image:radial-gradient(ellipse at 80% 0%,rgba(215,255,84,.045),transparent 35%),linear-gradient(rgba(230,241,218,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(230,241,218,.018) 1px,transparent 1px);background-size:auto,48px 48px,48px 48px}
+body:not(.cosmos-home) .site-header{width:var(--cos-shell);max-width:1320px;height:86px;border-bottom:1px solid var(--cos-line);z-index:40}
+body:not(.cosmos-home) .brand{gap:12px}
+body:not(.cosmos-home) .brand-mark{width:40px;height:40px;border:1px solid rgba(215,255,84,.65);background:transparent;color:var(--cos-lime);font-family:'Onest',sans-serif;font-size:22px}
+body:not(.cosmos-home) .brand-mark span{color:var(--cos-orange)}
+body:not(.cosmos-home) .brand-name{font-family:'Manrope',sans-serif;font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--cos-paper)}
+body:not(.cosmos-home) .brand-name span{font-size:7px;letter-spacing:.18em;color:#929b8b;margin-top:5px}
+body:not(.cosmos-home) .nav{gap:clamp(15px,2.5vw,34px);font-size:10px;color:#c5cbbf}
+body:not(.cosmos-home) .nav a:not(.nav-cta):hover{color:var(--cos-lime)}
+body:not(.cosmos-home) .nav-cta{border:1px solid rgba(215,255,84,.55);padding:11px 14px;background:transparent;color:var(--cos-paper)}
+body:not(.cosmos-home) .nav-cta span{color:var(--cos-lime)}
+body:not(.cosmos-home) .nav-cta:hover{background:var(--cos-lime);color:#0a0d07;border-color:var(--cos-lime)}
+body:not(.cosmos-home) .nav-cta:hover span{color:#0a0d07}
+body:not(.cosmos-home) .menu-toggle{border:1px solid var(--cos-line);background:transparent}
+body:not(.cosmos-home) .menu-toggle span{background:var(--cos-paper)}
+body:not(.cosmos-home) .inner-page{width:var(--cos-shell);max-width:1320px;padding-top:0;padding-bottom:90px}
+body:not(.cosmos-home) .page-hero{position:relative;isolation:isolate;overflow:hidden;padding:100px 0 90px;border-bottom:1px solid var(--cos-line)}
+body:not(.cosmos-home) .page-hero:after{content:"";position:absolute;z-index:-1;right:3%;top:12%;width:clamp(190px,30vw,420px);aspect-ratio:1;border:1px solid rgba(215,255,84,.22);border-radius:50%;box-shadow:inset 0 0 55px rgba(215,255,84,.035),0 0 80px rgba(215,255,84,.025);pointer-events:none}
+body:not(.cosmos-home) .page-hero:before{content:"";position:absolute;z-index:-1;right:8%;top:18%;width:clamp(140px,22vw,310px);aspect-ratio:1;border:1px solid rgba(215,255,84,.13);border-radius:50%;transform:rotateX(64deg) rotate(-28deg);pointer-events:none}
+body:not(.cosmos-home) .section-kicker{font-size:8px;letter-spacing:.17em;color:#9ca693}
+body:not(.cosmos-home) .page-overline{margin:35px 0 17px;color:var(--cos-lime);font-size:9px;letter-spacing:.15em;text-transform:uppercase}
+body:not(.cosmos-home) .page-hero h1{max-width:1000px;font-family:'Onest','Manrope',sans-serif;font-size:clamp(52px,8vw,105px);font-weight:500;line-height:.99;letter-spacing:-.09em;margin:0;position:relative;z-index:1}
+body:not(.cosmos-home) .page-hero h1 em{font-style:normal;color:var(--cos-lime)}
+body:not(.cosmos-home) .page-lead{max-width:620px;margin:26px 0 30px;color:#aab3a4;font-size:13px;line-height:1.95}
+body:not(.cosmos-home) .button-primary{border:0;border-radius:0;background:var(--cos-lime);color:#10140a;box-shadow:none}
+body:not(.cosmos-home) .button-primary:hover{box-shadow:0 10px 32px rgba(215,255,84,.15)}
+body:not(.cosmos-home) .price-hero{display:flex;align-items:center;gap:22px;margin:0 0 28px}
+body:not(.cosmos-home) .price-hero strong{font-family:'Onest',sans-serif;font-size:23px;font-weight:500;letter-spacing:-.05em;color:var(--cos-lime)}
+body:not(.cosmos-home) .price-hero span{max-width:300px;color:#919b8c;font-size:10px;line-height:1.7}
+body:not(.cosmos-home) .service-detail-list{border-top:1px solid var(--cos-line)}
+body:not(.cosmos-home) .detail-row{display:grid;grid-template-columns:48px minmax(0,1fr) 140px 36px;align-items:center;gap:20px;padding:27px 10px;border-bottom:1px solid var(--cos-line);transition:background .25s,padding .25s}
+body:not(.cosmos-home) .detail-row:hover{background:#111610;padding-inline:18px}
+body:not(.cosmos-home) .detail-no{color:var(--cos-lime);font-size:10px}
+body:not(.cosmos-home) .detail-row .service-tag{font-size:8px;color:#9ba594;letter-spacing:.1em}
+body:not(.cosmos-home) .detail-row h2{font-family:'Onest',sans-serif;font-size:clamp(21px,2.6vw,31px);font-weight:500;letter-spacing:-.06em;margin:5px 0}
+body:not(.cosmos-home) .detail-row p{color:#a5ad9e;font-size:11px;line-height:1.8;margin:0;max-width:600px}
+body:not(.cosmos-home) .detail-row>strong{font-size:11px;font-weight:700;text-align:right;white-space:nowrap}
+body:not(.cosmos-home) .detail-arrow{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--cos-line);color:var(--cos-lime);transition:all .2s}
+body:not(.cosmos-home) .detail-row:hover .detail-arrow{background:var(--cos-lime);color:#10140a;border-color:var(--cos-lime)}
+body:not(.cosmos-home) .detail-columns{display:grid;grid-template-columns:1fr .9fr;gap:10%;padding:75px 0;border-bottom:1px solid var(--cos-line)}
+body:not(.cosmos-home) .detail-columns article>h2,body:not(.cosmos-home) .page-band h2{font-family:'Onest',sans-serif;font-size:clamp(35px,4.5vw,60px);font-weight:500;line-height:1.05;letter-spacing:-.075em;margin:22px 0}
+body:not(.cosmos-home) .detail-columns h2 em,body:not(.cosmos-home) .page-band h2 em{font-style:normal;color:var(--cos-lime)}
+body:not(.cosmos-home) .detail-columns article>p{max-width:460px;color:#a6afa0;font-size:12px;line-height:1.95}
+body:not(.cosmos-home) .check-list,body:not(.cosmos-home) .page-band ul{list-style:none;padding:0;margin:0;border-top:1px solid var(--cos-line)}
+body:not(.cosmos-home) .check-list li,body:not(.cosmos-home) .page-band li{position:relative;padding:15px 0 15px 24px;border-bottom:1px solid var(--cos-line);font-size:11px;color:#c4cbbb}
+body:not(.cosmos-home) .check-list li:before,body:not(.cosmos-home) .page-band li:before{content:"↗";position:absolute;left:0;color:var(--cos-lime)}
+body:not(.cosmos-home) .page-band{display:grid;grid-template-columns:1fr .9fr;gap:10%;padding:50px 42px;margin-top:55px;background:#101510;border:1px solid rgba(215,255,84,.18)}
+body:not(.cosmos-home) .page-band h2{margin-bottom:0}
+body:not(.cosmos-home) .page-band li{border-color:rgba(230,241,218,.1)}
+body:not(.cosmos-home) .page-end{padding:35px 0 15px;color:#a5ad9e;font-size:12px}
+body:not(.cosmos-home) .underlined-link{display:inline-flex;gap:28px;padding-bottom:9px;border-bottom:1px solid #58644c;font-size:11px;color:var(--cos-paper)}
+body:not(.cosmos-home) .underlined-link span{color:var(--cos-lime)}
+body:not(.cosmos-home) .subtle-back{display:inline-block;margin-left:25px;color:#9ba594;font-size:10px}
+body:not(.cosmos-home) .footer{width:var(--cos-shell);max-width:1320px;padding:0 0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:#8d9788;font-size:9px}
+body:not(.cosmos-home) .footer p{max-width:250px}
+body:not(.cosmos-home) .footer .back-top{color:var(--cos-lime)}
+body:not(.cosmos-home) .contacts-page .page-hero{padding-bottom:75px}
+body:not(.cosmos-home) .contact-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;padding:35px 0 80px}
+body:not(.cosmos-home) .contact-methods article{border-top:1px solid var(--cos-line);padding-top:18px}
+body:not(.cosmos-home) .contact-methods h2{font-family:'Onest',sans-serif;font-size:20px;font-weight:500;letter-spacing:-.04em;margin:20px 0 10px}
+body:not(.cosmos-home) .contact-methods p{font-size:11px;line-height:1.9;color:#a5ad9e;margin:0}
+body:not(.cosmos-home) .contact-panel{position:relative;overflow:hidden;background:#101510;border:1px solid rgba(215,255,84,.22);padding:clamp(25px,5vw,60px);isolation:isolate}
+body:not(.cosmos-home) .contact-panel:after{content:"W·";position:absolute;right:3%;top:0;z-index:-1;font-family:'Onest',sans-serif;font-size:clamp(140px,27vw,350px);font-weight:800;letter-spacing:-.15em;color:rgba(215,255,84,.035);line-height:1}
+body:not(.cosmos-home) .contact-panel h2{font-family:'Onest',sans-serif;font-size:clamp(42px,6vw,70px);font-weight:500;line-height:1;letter-spacing:-.08em;margin:28px 0 18px}
+body:not(.cosmos-home) .contact-panel h2 em{font-style:normal;color:var(--cos-lime)}
+body:not(.cosmos-home) .contact-panel>p{color:#a5ad9e;font-size:11px;margin-bottom:35px}
+body:not(.cosmos-home) .inquiry-form{display:grid;grid-template-columns:1fr 1fr;gap:24px 22px;max-width:850px}
+body:not(.cosmos-home) .form-field{display:flex;flex-direction:column;gap:9px}
+body:not(.cosmos-home) .form-field label{font-size:10px;color:#c6cebc}
+body:not(.cosmos-home) .form-field label span{color:var(--cos-lime)}
+body:not(.cosmos-home) .form-field .field-optional{color:#7f897a}
+body:not(.cosmos-home) .form-field input,body:not(.cosmos-home) .form-field textarea{width:100%;min-width:0;border:1px solid rgba(230,241,218,.2);border-radius:0;background:#090c09;color:var(--cos-paper);padding:14px 15px;font:inherit;font-size:12px;outline:none;transition:border-color .2s,background .2s}
+body:not(.cosmos-home) .form-field input:focus,body:not(.cosmos-home) .form-field textarea:focus{border-color:var(--cos-lime);background:#0c100b}
+body:not(.cosmos-home) .form-field textarea{resize:vertical;min-height:145px}
+body:not(.cosmos-home) .message-field{grid-column:1/-1}
+body:not(.cosmos-home) .form-consent{grid-column:1/-1;display:flex;align-items:flex-start;gap:10px;color:#9da695;font-size:10px;line-height:1.7}
+body:not(.cosmos-home) .form-consent input{accent-color:var(--cos-lime);margin-top:3px}
+body:not(.cosmos-home) .form-submit{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:20px;max-width:250px;padding:16px 18px;border:0;background:var(--cos-lime);color:#10140a;font:700 11px 'Manrope',sans-serif;cursor:pointer;transition:transform .2s,box-shadow .2s}
+body:not(.cosmos-home) .form-submit span{font-size:17px;font-weight:400}
+body:not(.cosmos-home) .form-submit:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(215,255,84,.13)}
+body:not(.cosmos-home) .form-submit:disabled{opacity:.55;cursor:wait}
+body:not(.cosmos-home) .form-status{grid-column:1/-1;margin:0;font-size:11px;line-height:1.8}
+body:not(.cosmos-home) .form-status.is-success{color:var(--cos-lime)}body:not(.cosmos-home) .form-status.is-error{color:#ff9a83}
+body:not(.cosmos-home) .form-honeypot{position:absolute;left:-9999px}
+body:not(.cosmos-home) .faq-list summary:focus-visible,body:not(.cosmos-home) .detail-row:focus-visible{outline:2px solid var(--cos-lime);outline-offset:4px}
+@media(max-width:1050px){
+ body:not(.cosmos-home) .site-header{height:78px}
+ body:not(.cosmos-home) .nav{gap:13px}
+ body:not(.cosmos-home) .nav a{font-size:9px}
+ body:not(.cosmos-home) .nav-cta{padding:10px}
+ body:not(.cosmos-home) .page-hero{padding:80px 0 70px}
+ body:not(.cosmos-home) .page-hero h1{font-size:clamp(52px,8vw,82px)}
+ body:not(.cosmos-home) .detail-row{grid-template-columns:35px minmax(0,1fr) 115px 32px;gap:13px}
+}
+@media(max-width:700px){
+ body:not(.cosmos-home) .site-header{height:70px}
+ body:not(.cosmos-home) .menu-toggle{display:flex;flex-direction:column;gap:5px;padding:11px;z-index:42}
+ body:not(.cosmos-home) .nav{display:none;position:absolute;top:69px;left:-18px;right:-18px;background:#0d100d;padding:22px;border-bottom:1px solid var(--cos-line);align-items:stretch;flex-direction:column;gap:18px}
+ body:not(.cosmos-home) .nav.is-open{display:flex}
+ body:not(.cosmos-home) .nav a{display:block;font-size:12px}
+ body:not(.cosmos-home) .nav-cta{display:flex;justify-content:space-between}
+ body:not(.cosmos-home) .inner-page{padding-bottom:55px}
+ body:not(.cosmos-home) .page-hero{padding:68px 0 55px}
+ body:not(.cosmos-home) .page-hero:after{right:-18%;top:13%;opacity:.65}
+ body:not(.cosmos-home) .page-hero:before{right:-10%;top:20%;opacity:.65}
+ body:not(.cosmos-home) .page-overline{margin-top:28px;font-size:8px}
+ body:not(.cosmos-home) .page-hero h1{font-size:clamp(43px,11.5vw,68px)}
+ body:not(.cosmos-home) .page-lead{font-size:12px;line-height:1.85;margin:22px 0 25px}
+ body:not(.cosmos-home) .price-hero{display:block}
+ body:not(.cosmos-home) .price-hero strong{display:block;margin-bottom:8px}
+ body:not(.cosmos-home) .detail-row{grid-template-columns:25px minmax(0,1fr) 28px;gap:9px;padding:20px 1px}
+ body:not(.cosmos-home) .detail-row:hover{padding-inline:5px}
+ body:not(.cosmos-home) .detail-row h2{font-size:20px}
+ body:not(.cosmos-home) .detail-row p{font-size:10px}
+ body:not(.cosmos-home) .detail-row>strong{grid-column:2;grid-row:2;text-align:left;font-size:10px;color:var(--cos-lime)}
+ body:not(.cosmos-home) .detail-arrow{grid-column:3;grid-row:1;width:28px;height:28px}
+ body:not(.cosmos-home) .detail-columns{grid-template-columns:1fr;gap:30px;padding:50px 0}
+ body:not(.cosmos-home) .detail-columns article>h2,body:not(.cosmos-home) .page-band h2{font-size:39px}
+ body:not(.cosmos-home) .page-band{grid-template-columns:1fr;gap:28px;padding:27px 20px;margin-top:35px}
+ body:not(.cosmos-home) .page-end{padding-top:27px}
+ body:not(.cosmos-home) .subtle-back{display:block;margin:20px 0 0}
+ body:not(.cosmos-home) .footer{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-bottom:23px}
+ body:not(.cosmos-home) .footer p{font-size:8px}
+ body:not(.cosmos-home) .footer>span,body:not(.cosmos-home) .footer .back-top{font-size:7px}
+ body:not(.cosmos-home) .footer .back-top{text-align:right}
+ body:not(.cosmos-home) .contact-methods{grid-template-columns:1fr;gap:22px;padding:28px 0 55px}
+ body:not(.cosmos-home) .contact-methods article{padding-top:15px}
+ body:not(.cosmos-home) .contact-methods h2{font-size:18px;margin:14px 0 8px}
+ body:not(.cosmos-home) .contact-panel{padding:24px 18px}
+ body:not(.cosmos-home) .contact-panel h2{font-size:clamp(39px,10vw,56px)}
+ body:not(.cosmos-home) .inquiry-form{grid-template-columns:1fr;gap:20px}
+ body:not(.cosmos-home) .message-field,body:not(.cosmos-home) .form-consent,body:not(.cosmos-home) .form-submit,body:not(.cosmos-home) .form-status{grid-column:1}
+ body:not(.cosmos-home) .form-submit{max-width:none}
+ body:not(.cosmos-home) .faq-section{padding-bottom:55px}
+}
