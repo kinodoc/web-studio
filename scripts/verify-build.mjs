@@ -176,6 +176,82 @@ for (const [label, pattern] of required) {
 if (html.includes('hello@example.com')) warnings.push('В сборке остался временный контакт hello@example.com — заменить до публикации.');
 if (html.includes('kinodoc.github.io/web-studio')) warnings.push('SEO-адрес всё ещё указывает на GitHub Pages — сверить с реальным URL перед публикацией.');
 
+
+// Audit every generated page, not only the homepage. This catches broken links,
+// missing metadata, duplicate IDs, and heading issues on service/contact pages too.
+function collectHtmlFiles(directory) {
+  const files = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const fullPath = join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...collectHtmlFiles(fullPath));
+    else if (entry.isFile() && entry.name.endsWith('.html')) files.push(fullPath);
+  }
+  return files;
+}
+
+for (const pagePath of collectHtmlFiles(dist)) {
+  if (pagePath === htmlPath) continue; // The homepage has the detailed checks above.
+  const pageHtml = readFileSync(pagePath, 'utf8');
+  const relativePage = pagePath.slice(dist.length + 1);
+  const pageIds = [...pageHtml.matchAll(/\\bid\\s*=\\s*["']([^"']+)["']/gi)].map((m) => m[1]);
+  const pageIdSet = new Set();
+  for (const id of pageIds) {
+    if (pageIdSet.has(id)) errors.push(`${relativePage}: повторяющийся id: #${id}`);
+    pageIdSet.add(id);
+  }
+
+  const pageH1Count = [...pageHtml.matchAll(/<h1\\b[^>]*>/gi)].length;
+  if (pageH1Count !== 1) errors.push(`${relativePage}: должен быть ровно один h1; найдено: ${pageH1Count}`);
+  if (!/<html\\b[^>]*\\blang=["']ru["']/i.test(pageHtml)) errors.push(`${relativePage}: не указан lang="ru".`);
+  if (!/<title>[^<]+<\\/title>/i.test(pageHtml)) errors.push(`${relativePage}: отсутствует title.`);
+  if (!/<meta\\b[^>]*\\bname=["']description["'][^>]*\\bcontent=["'][^"']+["']/i.test(pageHtml)) errors.push(`${relativePage}: отсутствует meta description.`);
+  if (!/<link\\b[^>]*\\brel=["']canonical["'][^>]*\\bhref=["']https?:\\/\\/[^"']+["']/i.test(pageHtml)) errors.push(`${relativePage}: отсутствует canonical URL.`);
+
+  for (const match of pageHtml.matchAll(/\\bhref\\s*=\\s*["']([^"']*)["']/gi)) {
+    const href = match[1].trim();
+    if (href.startsWith('#') && href.length > 1) {
+      let fragment;
+      try {
+        fragment = decodeURIComponent(href.slice(1));
+      } catch {
+        errors.push(`${relativePage}: некорректный якорь: ${href}`);
+        continue;
+      }
+      if (!pageIdSet.has(fragment)) errors.push(`${relativePage}: ссылка на отсутствующий раздел: ${href}`);
+    }
+  }
+
+  for (const match of pageHtml.matchAll(/\\b(?:href|src)\\s*=\\s*["']([^"']+)["']/gi)) {
+    const raw = match[1].trim();
+    if (!raw || raw.startsWith('#') || /^(?:[a-z][a-z\\d+.-]*:|\\/\\/)/i.test(raw)) continue;
+    let pathname;
+    try {
+      pathname = new URL(raw, 'https://local.invalid').pathname;
+    } catch {
+      errors.push(`${relativePage}: некорректный URL: ${raw}`);
+      continue;
+    }
+    if (pathname.startsWith(base + '/')) pathname = pathname.slice(base.length);
+    else if (pathname === base) pathname = '/';
+    let decodedPath;
+    try {
+      decodedPath = decodeURIComponent(pathname);
+    } catch {
+      errors.push(`${relativePage}: некорректное кодирование пути: ${raw}`);
+      continue;
+    }
+    const target = resolve(dist, '.' + decodedPath);
+    if (!target.startsWith(dist + '/') && target !== dist) {
+      errors.push(`${relativePage}: путь выходит за пределы dist: ${raw}`);
+      continue;
+    }
+    const candidate = existsSync(target) && statSync(target).isDirectory()
+      ? join(target, 'index.html')
+      : target;
+    if (!existsSync(candidate)) errors.push(`${relativePage}: локальный ресурс не найден: ${raw}`);
+  }
+}
+
 if (warnings.length) {
   for (const warning of warnings) console.warn('WARNING: ' + warning);
 }
