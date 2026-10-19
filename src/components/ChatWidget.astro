@@ -100,6 +100,13 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
   const send = root.querySelector('[data-chat-send]');
   const welcome = root.querySelector('[data-chat-welcome]');
   const choices = root.querySelector('[data-chat-choices]');
+  const transferToggle = root.querySelector('[data-chat-transfer-toggle]');
+  const transferTools = root.querySelector('[data-chat-transfer-tools]');
+  const transferCreate = root.querySelector('[data-transfer-create]');
+  const transferOutput = root.querySelector('[data-transfer-output]');
+  const transferCode = root.querySelector('[data-transfer-code]');
+  const transferClaim = root.querySelector('[data-transfer-claim]');
+  const transferStatus = root.querySelector('[data-transfer-status]');
   const tokenKey = 'webStudioChatTokenV1';
   const conversationKey = 'webStudioChatConversationV1';
   let token = localStorage.getItem(tokenKey) || '';
@@ -121,7 +128,7 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
       if (send instanceof HTMLButtonElement) send.disabled = true;
     } else {
       setStatus('');
-      ensureConversation().then(loadMessages).catch(() => setStatus('Не удалось подключиться. Проверьте интернет и попробуйте ещё раз.'));
+      if (conversationId) ensureConversation().then(loadMessages).catch(() => setStatus('Не удалось подключиться. Проверьте интернет и попробуйте ещё раз.'));
       startPolling();
     }
     window.setTimeout(() => input instanceof HTMLTextAreaElement && input.focus(), 60);
@@ -177,11 +184,12 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
     polling = window.setInterval(() => loadMessages().catch(() => {}), 5000);
   }
   async function sendMessage(message) {
-    if (!api || !conversationId || sending) return;
+    if (!api || sending) return;
     sending = true;
     if (send instanceof HTMLButtonElement) send.disabled = true;
     setStatus('');
     try {
+      if (!conversationId) await ensureConversation();
       await request('/api/client/messages', { method: 'POST', body: JSON.stringify({ token, conversationId, message }) });
       if (input instanceof HTMLTextAreaElement) input.value = '';
       if (welcome instanceof HTMLElement) welcome.remove();
