@@ -90,15 +90,14 @@ for (const [label, pattern] of accessibilityChecks) {
   if (!pattern.test(html)) errors.push('Не найдена обязательная функция доступности: ' + label);
 }
 
-const menuButton = html.match(/<button\\b[^>]*data-menu-toggle[^>]*>/i)?.[0] ?? '';
-const controlledId = menuButton.match(/\\baria-controls=["']([^"']+)["']/i)?.[1];
+const menuButton = html.match(/<button\b[^>]*data-menu-toggle[^>]*>/i)?.[0] ?? '';
+const controlledId = menuButton.match(/\baria-controls=["']([^"']+)["']/i)?.[1];
 if (!controlledId) {
   errors.push('Кнопка мобильного меню не указывает управляемый элемент через aria-controls.');
-} else if (!new RegExp('<nav\\\\b(?=[^>]*\\\\bid=["\\\\']' + controlledId.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\for (const [label, pattern] of accessibilityChecks) {
-  if (!pattern.test(html)) errors.push('Не найдена обязательная функция доступности: ' + label);
-}
-') + '["\\\\'])', 'i').test(html)) {
-  errors.push('aria-controls кнопки мобильного меню указывает на отсутствующую навигацию: ' + controlledId);
+} else {
+  const navTags = [...html.matchAll(/<nav\b[^>]*>/gi)].map((match) => match[0]);
+  const controlledNavExists = navTags.some((tag) => tag.match(/\bid=["']([^"']+)["']/i)?.[1] === controlledId);
+  if (!controlledNavExists) errors.push('aria-controls кнопки мобильного меню указывает на отсутствующую навигацию: ' + controlledId);
 }
 
 const layoutPath = resolve('src/layouts/BaseLayout.astro');
@@ -107,11 +106,11 @@ if (!existsSync(layoutPath)) {
 } else {
   const layoutSource = readFileSync(layoutPath, 'utf8');
   const menuBehaviorChecks = [
-    ['обработка клавиши Escape для закрытия меню', /event\\.key\\s*===\\s*['"]Escape['"]/],
-    ['возврат фокуса на кнопку после Escape', /toggle\\?\\.focus\\(\\)/],
-    ['закрытие меню после выбора ссылки', /querySelectorAll\\(['"]a['"]\\)[\\s\\S]*?addEventListener\\(['"]click['"],\\s*closeMenu\\)/],
-    ['доступное состояние кнопки через aria-expanded', /setAttribute\\(['"]aria-expanded['"],\\s*String\\(!opened\\)\\)/],
-    ['fallback для браузера без IntersectionObserver', /else\\s*{[\\s\\S]*?querySelectorAll\\(['"]\\[data-reveal\\]['"]\\)[\\s\\S]*?is-visible/],
+    ['обработка клавиши Escape для закрытия меню', /event\.key\s*===\s*['"]Escape['"]/],
+    ['возврат фокуса на кнопку после Escape', /toggle\?\.\s*focus\(\)/],
+    ['закрытие меню после выбора ссылки', /querySelectorAll\(['"]a['"]\)[\s\S]*?addEventListener\(['"]click['"],\s*closeMenu\)/],
+    ['доступное состояние кнопки через aria-expanded', /setAttribute\(['"]aria-expanded['"],\s*String\(!opened\)\)/],
+    ['fallback для браузера без IntersectionObserver', /else\s*{[\s\S]*?querySelectorAll\(['"]\[data-reveal\]['"]\)[\s\S]*?is-visible/],
   ];
   for (const [label, pattern] of menuBehaviorChecks) {
     if (!pattern.test(layoutSource)) errors.push('Не найдена проверка поведения интерфейса: ' + label + '.');
