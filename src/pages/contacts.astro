@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL;
 <div class="form-field"><label for="inquiry-email">Электронная почта <span class="field-optional">(необязательно)</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="name@example.com" /></div>
 <div class="form-field"><label for="inquiry-message">Расскажите о проекте <span>*</span></label><textarea id="inquiry-message" name="message" rows="5" maxlength="5000" required placeholder="Какой сайт нужен и чем он должен помочь?"></textarea></div>
 <div class="form-honeypot" aria-hidden="true"><label for="inquiry-company">Не заполняйте это поле</label><input id="inquiry-company" name="_honey" type="text" tabindex="-1" autocomplete="off" /></div>
-<label class="form-consent"><input type="checkbox" name="consent" value="yes" required /><span>Согласен(на) на передачу указанных данных через сервис FormSubmit для обработки заявки и ответа на неё.</span></label>
+<label class="form-consent"><input type="checkbox" name="consent" value="yes" required /><span>Согласен(на) на обработку указанных данных для связи по моей заявке.</span></label>
 <button class="form-submit" id="inquiry-submit" type="submit">Отправить заявку <span>↗</span></button>
 <p class="form-status" id="inquiry-status" role="status" aria-live="polite"></p>
 <p class="contact-note">Форма отправляет данные через внешний сервис FormSubmit. При первой отправке сервис может попросить подтвердить адрес получателя по письму.</p>
