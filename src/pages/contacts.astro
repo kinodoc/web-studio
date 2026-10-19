@@ -17,7 +17,7 @@ const base = import.meta.env.BASE_URL;
 <div class="form-field"><label for="inquiry-name">Как к вам обращаться <span>*</span></label><input id="inquiry-name" name="name" type="text" autocomplete="name" maxlength="100" required placeholder="Ваше имя" /></div>
 <div class="form-field"><label for="inquiry-contact">Телефон или другой способ связи <span>*</span></label><input id="inquiry-contact" name="contact" type="text" autocomplete="tel" maxlength="160" required placeholder="Телефон, мессенджер или почта" /></div>
 <div class="form-field"><label for="inquiry-email">Электронная почта <span class="field-optional">(необязательно)</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="адрес@почта.рф" /></div>
-<div class="form-field message-field"><label for="inquiry-message">Расскажите о проекте <span>*</span></label><textarea id="inquiry-message" name="message" rows="5" maxlength="5000" required placeholder="Какой сайт нужен и чем он должен помочь?"></textarea><div class="speech-controls"><button class="speech-toggle" id="speech-toggle" type="button" aria-pressed="false" aria-describedby="speech-help"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg><span id="speech-button-label">Начать запись</span></button><span class="speech-indicator" id="speech-indicator" aria-hidden="true"></span><p class="speech-help" id="speech-help">Нажмите кнопку и говорите по-русски. Распознанный текст появится в поле — его можно отредактировать. Для распознавания браузер может использовать внешний сервис.</p></div></div>
+<div class="form-field message-field"><label for="inquiry-message">Расскажите о проекте <span>*</span></label><textarea id="inquiry-message" name="message" rows="5" maxlength="5000" required placeholder="Какой сайт нужен и чем он должен помочь?"></textarea><div class="speech-controls"><button class="speech-toggle" id="speech-toggle" type="button" aria-pressed="false" aria-describedby="speech-help"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg><span id="speech-button-label">Надиктовать сообщение</span></button><span class="speech-indicator" id="speech-indicator" aria-hidden="true"></span><p class="speech-help" id="speech-help">Нажмите кнопку и говорите по-русски. Распознанный текст появится в поле — его можно отредактировать. Для распознавания браузер может использовать внешний сервис.</p></div></div>
 <div class="form-honeypot" aria-hidden="true"><label for="inquiry-company">Не заполняйте это поле</label><input id="inquiry-company" name="_honey" type="text" tabindex="-1" autocomplete="off" /></div>
 <label class="form-consent"><input type="checkbox" name="consent" value="yes" required /><span>Согласен(на) на обработку указанных данных для связи по моей заявке.</span></label>
 <button class="form-submit" id="inquiry-submit" type="submit">Отправить заявку <span>↗</span></button>
@@ -65,83 +65,123 @@ const speechButtonLabel = document.querySelector<HTMLElement>('#speech-button-la
 const speechIndicator = document.querySelector<HTMLElement>('#speech-indicator');
 const speechHelp = document.querySelector<HTMLElement>('#speech-help');
 
+type SpeechResult = { isFinal: boolean; 0: { transcript: string } };
+type SpeechRecognitionLike = {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  onresult: ((event: { resultIndex: number; results: ArrayLike<SpeechResult> }) => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+};
+const speechWindow = window as unknown as {
+  SpeechRecognition?: new () => SpeechRecognitionLike;
+  webkitSpeechRecognition?: new () => SpeechRecognitionLike;
+};
+const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
+
 if (messageField && speechButton && speechButtonLabel && speechIndicator && speechHelp) {
-  const mediaDevices = navigator.mediaDevices;
-  const canRecord = Boolean(mediaDevices?.getUserMedia) && 'MediaRecorder' in window;
-
-  if (!canRecord) {
+  if (!SpeechRecognition) {
     speechButton.disabled = true;
-    speechButtonLabel.textContent = 'Запись недоступна';
-    speechHelp.textContent = 'Этот браузер не поддерживает запись звука на сайте. Можно ввести текст вручную или использовать микрофон клавиатуры телефона.';
+    speechButtonLabel.textContent = 'Диктовка недоступна';
+    speechHelp.textContent = 'Этот браузер не поддерживает распознавание речи. Вы можете заполнить поле обычным способом.';
   } else {
-    let stream: MediaStream | null = null;
-    let recorder: MediaRecorder | null = null;
-    let chunks: BlobPart[] = [];
-    let isRecording = false;
+    let recognition: SpeechRecognitionLike | null = null;
+    let isListening = false;
+    let shouldContinue = false;
+    let restartTimer = 0;
+    let networkRetries = 0;
+    let lastError = '';
+    let baseText = '';
+    let dictatedText = '';
 
-    const setRecordingState = (recording: boolean) => {
-      isRecording = recording;
-      speechButton.setAttribute('aria-pressed', String(recording));
-      speechButton.classList.toggle('is-listening', recording);
-      speechIndicator.classList.toggle('is-active', recording);
-      speechButtonLabel.textContent = recording ? 'Остановить запись' : 'Начать запись';
+    const setListeningState = (listening: boolean) => {
+      isListening = listening;
+      speechButton.setAttribute('aria-pressed', String(listening));
+      speechButton.classList.toggle('is-listening', listening);
+      speechIndicator.classList.toggle('is-active', listening);
+      speechButtonLabel.textContent = listening ? 'Остановить диктовку' : 'Надиктовать сообщение';
+      speechHelp.textContent = listening
+        ? 'Слушаем… Если браузер прервёт распознавание после паузы, диктовка продолжится автоматически.'
+        : 'Диктовка остановлена. Проверьте текст и при необходимости исправьте его.';
     };
 
-    const releaseMicrophone = () => {
-      stream?.getTracks().forEach((track) => track.stop());
-      stream = null;
+    const startRecognition = () => {
+      if (!shouldContinue) return;
+      try {
+        const current = new SpeechRecognition();
+        recognition = current;
+        current.lang = 'ru-RU';
+        current.interimResults = false;
+        current.continuous = true;
+        current.onresult = (event) => {
+          networkRetries = 0;
+          lastError = '';
+          for (let i = event.resultIndex; i < event.results.length; i += 1) {
+            const result = event.results[i];
+            if (result.isFinal) {
+              const phrase = result[0].transcript.trim();
+              if (phrase) dictatedText += (dictatedText ? ' ' : '') + phrase;
+            }
+          }
+          const addition = dictatedText.trim();
+          messageField.value = [baseText, addition].filter(Boolean).join(baseText && addition ? ' ' : '');
+          messageField.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+        current.onerror = (event) => {
+          const messages: Record<string, string> = {
+            'not-allowed': 'Разрешите доступ к микрофону в настройках браузера.',
+            'service-not-allowed': 'Распознавание речи недоступно. Можно ввести текст вручную.',
+            'no-speech': 'Речь не обнаружена. Начните говорить, когда будете готовы.',
+            'network': 'Связь с сервисом распознавания прервалась. Пробуем восстановить диктовку…',
+            'audio-capture': 'Не удалось включить микрофон.'
+          };
+          lastError = event.error;
+          if (event.error !== 'aborted') speechHelp.textContent = messages[event.error] || 'Не удалось распознать речь. Попробуйте ещё раз или введите текст вручную.';
+          if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(event.error)) shouldContinue = false;
+        };
+        current.onend = () => {
+          if (recognition === current) recognition = null;
+          if (shouldContinue && lastError === 'network') {
+            networkRetries += 1;
+            if (networkRetries <= 4) {
+              restartTimer = window.setTimeout(startRecognition, networkRetries * 1000);
+            } else {
+              shouldContinue = false;
+              setListeningState(false);
+              speechHelp.textContent = 'Сервис распознавания не отвечает. Это ограничение браузера или сети. Попробуйте диктовку через микрофон клавиатуры телефона.';
+            }
+          } else if (shouldContinue) {
+            restartTimer = window.setTimeout(startRecognition, 300);
+          } else {
+            window.clearTimeout(restartTimer);
+            setListeningState(false);
+          }
+        };
+        current.start();
+      } catch {
+        shouldContinue = false;
+        recognition = null;
+        setListeningState(false);
+        speechHelp.textContent = 'Не удалось запустить диктовку. Проверьте разрешение на микрофон или введите текст вручную.';
+      }
     };
 
-    speechButton.addEventListener('click', async () => {
-      if (isRecording) {
-        recorder?.stop();
+    speechButton.addEventListener('click', () => {
+      if (isListening) {
+        shouldContinue = false;
+        window.clearTimeout(restartTimer);
+        recognition?.stop();
         return;
       }
-
-      speechHelp.textContent = 'Запрашиваем доступ к микрофону…';
-      speechButton.disabled = true;
-      try {
-        stream = await mediaDevices.getUserMedia({ audio: true });
-        chunks = [];
-        const options = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-          ? { mimeType: 'audio/webm;codecs=opus' }
-          : undefined;
-        recorder = new MediaRecorder(stream, options);
-        recorder.addEventListener('dataavailable', (event) => {
-          if (event.data.size > 0) chunks.push(event.data);
-        });
-        recorder.addEventListener('error', () => {
-          speechHelp.textContent = 'Не удалось записать звук. Проверьте разрешение на микрофон и попробуйте ещё раз.';
-          setRecordingState(false);
-          releaseMicrophone();
-          speechButton.disabled = false;
-        });
-        recorder.addEventListener('stop', () => {
-          const recording = new Blob(chunks, { type: recorder?.mimeType || 'audio/webm' });
-          releaseMicrophone();
-          setRecordingState(false);
-          speechButton.disabled = false;
-          if (recording.size === 0) {
-            speechHelp.textContent = 'Запись пустая. Нажмите «Начать запись» и попробуйте ещё раз.';
-            return;
-          }
-          speechHelp.textContent = 'Запись завершена. Браузер сохранил звук, но не преобразовал его в текст. Пока можно использовать микрофон клавиатуры телефона или ввести текст вручную.';
-        });
-        recorder.start();
-        setRecordingState(true);
-        speechHelp.textContent = 'Идёт запись. Говорите и делайте паузы сколько нужно. Когда закончите, нажмите «Остановить запись». Звук не отправляется с формой.';
-      } catch {
-        releaseMicrophone();
-        setRecordingState(false);
-        speechHelp.textContent = 'Не удалось включить микрофон. Разрешите доступ в браузере или введите текст вручную.';
-      } finally {
-        speechButton.disabled = false;
-      }
-    });
-
-    window.addEventListener('pagehide', () => {
-      if (recorder?.state === 'recording') recorder.stop();
-      releaseMicrophone();
+      baseText = messageField.value.trim();
+      dictatedText = '';
+      shouldContinue = true;
+      setListeningState(true);
+      startRecognition();
     });
   }
 }
