@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteFrame from '../../components/SiteFrame.astro';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Сайт-визитка — от 10 000 ₽ | WEB STUDIO" description="Современный сайт-визитка для специалиста или малого бизнеса: услуги, преимущества, контакты и адаптивный дизайн." canonical="https://kinodoc.github.io/web-studio/services/business-card/">
+<SiteFrame active="services"><main id="top" class="inner-page section-shell">
+<div class="page-hero" data-reveal><div class="section-kicker">[ УСЛУГА / 02 ]</div><p class="page-overline">Business card · ясное представительство</p><h1>Чтобы вас находили.<br /><em>Чтобы вам доверяли.</em></h1><p class="page-lead">Сайт-визитка собирает главное о вас в одном аккуратном месте: чем занимаетесь, какую пользу приносите, как работаете и как с вами связаться. Никакого информационного шума — только нужное.</p><div class="price-hero"><strong>от 10 000 ₽</strong><span>Подходит для небольшого объёма страниц и стандартных сценариев.</span></div><a class="button button-primary" href={base + 'contacts/'}>Обсудить сайт-визитку <span>↗</span></a></div>
+<section class="detail-columns"><article><span class="section-kicker">[ КОМУ ПОДОЙДЁТ ]</span><h2>Небольшой сайт.<br /><em>Серьёзное лицо.</em></h2><p>Для частных специалистов, мастеров, локальных компаний и начинающих проектов, которым нужно понятное онлайн-представительство и единая ссылка для клиентов.</p></article><article><span class="section-kicker">[ ОСНОВНЫЕ БЛОКИ ]</span><ul class="check-list"><li>Кто вы и чем можете помочь</li><li>Услуги или ключевые направления</li><li>Преимущества и ответы на вопросы</li><li>Контакты и удобный способ обращения</li><li>Адаптивная мобильная версия</li></ul></article></section>
+<section class="page-band"><div><div class="section-kicker">[ ПРИНЦИП ]</div><h2>Меньше страниц.<br /><em>Больше ясности.</em></h2></div><ul><li>Содержание без перегруза</li><li>Визуальный стиль под вашу сферу</li><li>Понятные контакты и действия</li><li>Базовые метаданные и SEO-структура</li><li>Передача готовых файлов</li></ul></section>
+<section class="page-end"><p>Начнём с того, что важно вашим клиентам.</p><a class="underlined-link" href={base + 'contacts/'}>Рассказать о проекте <span>↗</span></a><a class="subtle-back" href={base + 'services/'}>← Все услуги</a></section>
+</main></SiteFrame></BaseLayout>
