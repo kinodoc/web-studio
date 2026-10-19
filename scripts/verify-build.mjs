@@ -1,4 +1,4 @@
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 
 const dist = resolve('dist');
@@ -80,6 +80,33 @@ for (const match of html.matchAll(/<h([1-6])\b[^>]*>/gi)) {
 
 const viewport = /<meta\b(?=[^>]*\bname=["']viewport["'])(?=[^>]*\bcontent=["'][^"']+["'])[^>]*>/i;
 if (!viewport.test(html)) errors.push('Не найден meta viewport с содержимым.');
+
+const accessibilityChecks = [
+  ['кнопка мобильного меню с aria-expanded', /<button\b[^>]*aria-expanded=["'](?:true|false)["'][^>]*>/i],
+  ['раскрываемые FAQ через нативный details', /<details\b[^>]*>[\s\S]*?<summary\b/i],
+  ['основная навигация', /<nav\b[^>]*id=["']site-navigation["']/i],
+];
+for (const [label, pattern] of accessibilityChecks) {
+  if (!pattern.test(html)) errors.push('Не найдена обязательная функция доступности: ' + label);
+}
+
+const assetsDir = join(dist, '_astro');
+if (!existsSync(assetsDir) || !statSync(assetsDir).isDirectory()) {
+  errors.push('Не найдена папка со скомпилированными ресурсами Astro: dist/_astro.');
+} else {
+  const cssFiles = readdirSync(assetsDir).filter((file) => file.endsWith('.css'));
+  if (!cssFiles.length) errors.push('В сборке не найден CSS-файл.');
+  const css = cssFiles.map((file) => readFileSync(join(assetsDir, file), 'utf8')).join('\n');
+  const cssChecks = [
+    ['адаптация для узких экранов', /@media\s*\(max-width:\s*640px\)/i],
+    ['видимый фокус клавиатуры', /:focus-visible/i],
+    ['режим уменьшения анимации', /prefers-reduced-motion\s*:\s*reduce/i],
+    ['состояние открытого мобильного меню', /nav\.is-open/i],
+  ];
+  for (const [label, pattern] of cssChecks) {
+    if (!pattern.test(css)) errors.push('В собранном CSS отсутствует ' + label + '.');
+  }
+}
 
 const imageTags = [...html.matchAll(/<img\b[^>]*>/gi)].map((m) => m[0]);
 for (const tag of imageTags) {
