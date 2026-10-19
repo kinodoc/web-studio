@@ -1,5 +1,5 @@
 import { readFileSync, existsSync, statSync } from 'node:fs';
-import { resolve, join, extname } from 'node:path';
+import { resolve, join } from 'node:path';
 
 const dist = resolve('dist');
 const htmlPath = join(dist, 'index.html');
