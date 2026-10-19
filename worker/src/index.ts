@@ -170,7 +170,7 @@ export default {
       }
 
       if (route === "/api/client/messages" && request.method === "GET") {
-        const token = text((request.headers.get("Authorization") || "").replace(/^Bearer\\s+/i, ""), 200);
+        const token = text((request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, ""), 200);
         const conversationId = text(url.searchParams.get("conversationId"), 100);
         if (token.length < 32 || !conversationId) return json({ error: "Missing conversation credentials" }, 400, headers);
         const tokenHash = await sha256(token);
