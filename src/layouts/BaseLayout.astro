@@ -1,5 +1,5 @@
 ---
-const { title = 'WEB STUDIO — цифровые миры, созданные для людей', description = 'Создаём цифровые продукты и веб-вселенные для людей: личные сайты от 10 000 ₽, одностраничные проекты от 15 000 ₽, многостраничные цифровые миры от 30 000 ₽. Авторский дизайн, интерактивность и разработка.', canonical = 'https://kinodoc.github.io/web-studio/', pageClass = '' } = Astro.props;
+const { title = 'WEB STUDIO — цифровые миры, созданные для людей', description = 'Создаём цифровые продукты и сайты: личный сайт от 15 000 ₽, одностраничный сайт от 20 000 ₽, многостраничный сайт от 40 000 ₽, интерактивный визуальный проект от 30 000 ₽.', canonical = 'https://kinodoc.github.io/web-studio/', pageClass = '' } = Astro.props;
 import '../styles/global.css';
 import '../styles/design-system.css';
 import '../styles/cosmos.css';
@@ -20,7 +20,7 @@ import '../styles/cosmos.css';
 <meta property="og:type" content="website" /><meta property="og:locale" content="ru_RU" />
 <meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} />
 <title>{title}</title>
-<script type="application/ld+json" set:html={JSON.stringify({'@context':'https://schema.org','@type':'ProfessionalService',name:'Веб-студия',description,priceRange:'от 10 000 ₽',areaServed:{'@type':'Country',name:'Россия'},availableLanguage:['Russian']})} />
+<script type="application/ld+json" set:html={JSON.stringify({'@context':'https://schema.org','@type':'ProfessionalService',name:'Веб-студия',description,priceRange:'15 000–40 000 ₽',areaServed:{'@type':'Country',name:'Россия'},availableLanguage:['Russian']})} />
 </head>
 <body class={pageClass}>
 <a class="skip-link" href="#top">Перейти к содержимому</a>
