@@ -4,6 +4,7 @@
 - The Astro interface is implemented in `src/components/ChatWidget.astro` and mounted by `src/layouts/BaseLayout.astro`.
 - The chat opens as a compact panel, can expand into a large in-site workspace, and uses a full-screen layout on narrow mobile screens.
 - Client messages are designed to be stored in Cloudflare D1 via the Worker API. The browser stores a random client token and conversation ID so a client can return after closing the browser or rebooting the computer in the same browser profile.
+- Cross-device transfer is implemented on this feature branch: create a three-digit one-time code, valid for five minutes, then enter it on the second device. A successful transfer adds a second device credential without disconnecting the first.
 - The Worker API is in `worker/src/index.ts`; schema is `worker/schema.sql`.
 - The current contact form is intentionally retained until the backend is deployed and tested. Do not remove it before sending, persistence, email notification, and admin replies have been verified end to end.
 
