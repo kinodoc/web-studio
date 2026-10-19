@@ -111,3 +111,32 @@ html.js-enabled [data-reveal]{opacity:0;transform:translateY(22px);transition:op
   .proof-stat span{font-size:8px}
   .proof-note{flex-basis:100%;padding-top:3px}
 }
+
+
+/* Contact form */
+.inquiry-form{display:grid;gap:18px;max-width:720px;margin-top:28px}
+.inquiry-form .form-field{display:grid;gap:7px}
+.inquiry-form label{font-size:11px;font-weight:600}
+.inquiry-form label span{color:#6b2e20}
+.inquiry-form label .field-optional{font-size:9px;font-weight:400;color:#60392f}
+.inquiry-form input:not([type="checkbox"]),.inquiry-form textarea{width:100%;min-width:0;border:1px solid #6b3b2e88;background:#fff4e8;color:#191a16;border-radius:0;padding:13px 14px;font:400 12px/1.6 var(--body);outline-offset:3px}
+.inquiry-form input::placeholder,.inquiry-form textarea::placeholder{color:#8c776d;opacity:1}
+.inquiry-form textarea{resize:vertical;min-height:130px}
+.inquiry-form input:focus,.inquiry-form textarea:focus{outline:2px solid #542e24;border-color:transparent}
+.inquiry-form .form-honeypot{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.inquiry-form .form-consent{display:flex;align-items:flex-start;gap:10px;font-size:10px;line-height:1.7;font-weight:400;color:#4e2b23}
+.inquiry-form .form-consent input{flex:0 0 auto;width:16px;height:16px;margin:2px 0 0;accent-color:#191a16}
+.form-submit{display:flex;align-items:center;justify-content:space-between;gap:25px;width:fit-content;min-width:220px;border:0;background:#f1f0e9;color:#171813;padding:15px 18px;font-size:12px;font-weight:700;cursor:pointer;transition:transform .2s,opacity .2s}
+.form-submit span{font-size:18px}
+.form-submit:hover:not(:disabled){transform:translateY(-2px)}
+.form-submit:disabled{opacity:.55;cursor:wait}
+.form-status{font-size:11px;line-height:1.7;margin:0;min-height:0}
+.form-status:empty{display:none}
+.form-status.is-pending{color:#4e2b23}
+.form-status.is-success{padding:12px 14px;background:#f1f0e9;color:#243017}
+.form-status.is-error{padding:12px 14px;background:#191a16;color:#fff0dc}
+.contact-panel .inquiry-form .contact-note{max-width:640px;margin:0;font-size:9px;line-height:1.7;opacity:.8}
+@media(max-width:640px){
+  .inquiry-form{gap:15px;margin-top:23px}
+  .form-submit{width:100%}
+}
