@@ -1,57 +1,160 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
 const services = [
-{number:'01',title:'Одностраничный сайт',price:'от 15 000 ₽',text:'Одна сильная страница, которая объясняет ценность и ведёт к заявке.',tag:'Для запуска и рекламы'},
-{number:'02',title:'Сайт-визитка',price:'от 10 000 ₽',text:'Аккуратное цифровое представительство, которому доверяют с первого взгляда.',tag:'Для специалистов и малого бизнеса'},
-{number:'03',title:'Корпоративный сайт',price:'от 30 000 ₽',text:'Структура, которая раскрывает компанию, услуги и преимущества без лишнего шума.',tag:'Для растущих компаний'},
-{number:'04',title:'Индивидуальный проект',price:'по задаче',text:'Нестандартный интерфейс, интерактивные элементы и функциональность под ваш процесс.',tag:'Когда шаблонов недостаточно'}
-];
-const questions = [
-['Сколько стоит сайт?','Сайт-визитка начинается от 10 000 ₽, одностраничный сайт — от 15 000 ₽. Точную цену называем после обсуждения задачи и фиксируем до начала работ.'],
-['Сколько времени занимает разработка?','Срок зависит от объёма и готовности материалов. После короткого брифа согласуем реалистичный график и этапы.'],
-['Сайт будет работать на телефоне?','Да. Адаптивная вёрстка предусматривает смартфоны, планшеты и большие экраны. Проверяем навигацию, читаемость и интерактивные элементы.'],
-['Поможете сайту появляться в поиске?','Подготавливаем сайт для поисковых систем: настраиваем заголовки и описания страниц, структуру, карту сайта и мобильную версию. Продвижение зависит от конкуренции и содержания, поэтому обещать первое место было бы нечестно.'],
-['Смогу ли я разместить сайт в другом месте?','Да. Мы передаём готовые файлы сайта, которые можно разместить на другом хостинге. Необязательно навсегда оставаться на одной площадке.']
+  { n: '01', title: 'Сайт-визитка', price: 'от 10 000 ₽', text: 'Сильное и аккуратное представительство вашего дела в сети.', href: 'business-card/' },
+  { n: '02', title: 'Одностраничный сайт', price: 'от 15 000 ₽', text: 'Одна история, одно предложение и понятный путь к обращению.', href: 'landing/' },
+  { n: '03', title: 'Корпоративный сайт', price: 'от 30 000 ₽', text: 'Полноценная структура для компании, её услуг и развития.', href: 'corporate/' },
+  { n: '04', title: 'Индивидуальный проект', price: 'По задаче', text: 'Необычный интерфейс, интерактивность и логика под конкретную идею.', href: 'custom/' }
 ];
 ---
-<BaseLayout pageClass="home-body" title="Веб-студия — авторская разработка сайтов для бизнеса" description="Создаём выразительные и быстрые сайты для бизнеса: сайты-визитки от 10 000 ₽, одностраничные сайты от 15 000 ₽, корпоративные сайты и индивидуальные проекты." canonical="https://kinodoc.github.io/web-studio/">
-<div class="cursor-glow" aria-hidden="true"></div>
-<header class="site-header">
-<a class="brand" href={import.meta.env.BASE_URL} aria-label="На главную"><span class="brand-mark">В<span>·</span></span><span class="brand-name">ВЕБ<span>СТУДИЯ</span></span></a>
-<button class="menu-toggle" data-menu-toggle aria-controls="site-navigation" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span></button>
-<nav class="nav" id="site-navigation" data-menu aria-label="Главная навигация"><a href={import.meta.env.BASE_URL}>Главная</a><a href={import.meta.env.BASE_URL + "services/"}>Услуги</a><a href="#approach">Подход</a><a href="#concepts">Примеры</a><a href="#process">Этапы</a><a href="#faq">Вопросы</a><a href={import.meta.env.BASE_URL + "contacts/"}>Контакты</a><a class="nav-cta" href={import.meta.env.BASE_URL + "contacts/"}>Обсудить проект <span>↗</span></a></nav>
+<BaseLayout pageClass="cosmos-home" title="WEB STUDIO — сайты с характером" description="Разрабатываем выразительные сайты для бизнеса: авторский дизайн, интерактивные решения и аккуратная техническая реализация." canonical="https://kinodoc.github.io/web-studio/">
+<header class="cosmos-header">
+  <a class="cosmos-brand" href={base} aria-label="WEB STUDIO — главная"><span class="brand-symbol">W<span>·</span></span><span>WEB STUDIO<small>ДИЗАЙН · РАЗРАБОТКА</small></span></a>
+  <nav class="cosmos-nav" aria-label="Главная навигация"><a href="#work">Работы</a><a href="#services">Услуги</a><a href="#method">Подход</a><a href={base + 'contacts/'} class="nav-contact">Обсудить проект <span>↗</span></a></nav>
+  <button class="cosmos-menu" type="button" aria-label="Прокрутить к услугам" onclick="document.querySelector('#services')?.scrollIntoView({behavior:'smooth'})"><span></span><span></span></button>
 </header>
-<main id="top" class="home-page">
-<section class="hero section-shell">
-<div class="hero-copy"><div class="eyebrow"><span class="status-dot"></span> Сайты для бизнеса и людей</div>
-<h1>Не просто<br />сайт. <em>Впечатление.</em></h1>
-<p class="hero-lead">Создаём цифровые пространства, которые выглядят убедительно, работают быстро и помогают бизнесу расти.</p>
-<p class="hero-pricing">Сайт-визитка — <strong>от 10 000 ₽</strong><span>·</span> Одностраничный сайт — <strong>от 15 000 ₽</strong></p>
-<div class="hero-actions"><a class="button button-primary" href="#contact">Обсудить проект <span>↗</span></a><a class="text-link" href={import.meta.env.BASE_URL + "services/"}>Выбрать услугу <span>↗</span></a></div>
-<p class="hero-reassurance">Не нужно готовое ТЗ — начнём с вашей задачи.</p>
-</div>
-<div class="hero-art" aria-hidden="true"><div class="preview-glow"></div><div class="preview-orbit preview-orbit-a"></div><div class="preview-orbit preview-orbit-b"></div><div class="studio-preview"><div class="preview-chrome"><span class="chrome-dots"><i></i><i></i><i></i></span><span class="chrome-address">ваш-сайт.рф</span><span class="chrome-menu">•••</span></div><div class="preview-site"><div class="preview-nav"><span class="preview-logo">ВАШ БРЕНД<span>®</span></span><span>КОНЦЕПЦИЯ&nbsp;&nbsp; / &nbsp;&nbsp;2026</span><b>↗</b></div><div class="preview-copy"><span class="preview-kicker">ИДЕЯ · ФОРМА · САЙТ</span><div class="preview-headline">Создаём<br /><em>новый взгляд.</em></div><p>Цифровой опыт для брендов, которым есть что сказать.</p><span class="preview-cta">СМОТРЕТЬ КОНЦЕПЦИЮ&nbsp; ↗</span></div><div class="preview-visual"><div class="preview-sun"></div><div class="preview-ribbon ribbon-one"></div><div class="preview-ribbon ribbon-two"></div><div class="preview-ribbon ribbon-three"></div><span>ВИЗУАЛЬНАЯ ИДЕЯ / 001</span></div><div class="preview-footer"><span>ИНДИВИДУАЛЬНЫЙ ДИЗАЙН</span><span>01 — 04</span></div></div></div><div class="floating-note note-design"><span class="note-icon">✳</span><span><b>Визуальная идея</b><small>Узнаваемый визуальный язык</small></span></div><div class="floating-note note-code"><span class="code-mark">{ }</span><span><b>Чистая разработка</b><small>Быстро. Адаптивно. Надёжно.</small></span></div><div class="art-index">ВЕБ-СТУДИЯ / РАЗРАБОТКА <span>— 001</span></div></div>
-<div class="hero-bottom"><span>01 / ЦИФРОВОЙ ОПЫТ</span><span>ДИЗАЙН · РАЗРАБОТКА · ПОИСК</span><a href="#services">Листайте вниз ↓</a></div>
-</section>
-<section class="ticker" aria-label="Наши принципы"><div class="ticker-track"><span>СМЫСЛ ПРЕЖДЕ ФОРМЫ</span><i>✳</i><span>БЕЗ ШАБЛОННОГО МЫШЛЕНИЯ</span><i>✳</i><span>СКОРОСТЬ И ТОЧНОСТЬ</span><i>✳</i><span>СМЫСЛ ПРЕЖДЕ ФОРМЫ</span><i>✳</i></div></section>
-<section class="intro section-shell" id="approach" data-reveal><div class="section-kicker">[ 01 — ПОДХОД ]</div><div class="intro-content"><h2>Хороший сайт<br />говорит за вас<span>.</span></h2><div class="intro-text"><p>Первые секунды решают многое. Поэтому мы соединяем выразительный визуал, понятную структуру и техническую основу — чтобы посетитель быстро понял, кто вы, чем полезны и почему стоит обратиться именно к вам.</p><a class="underlined-link" href="#process">Как мы работаем <span>↗</span></a></div></div>
-<div class="principles"><article><span>01</span><div><h3>С характером</h3><p>Визуальная система, созданная под вашу задачу, а не подогнанная под чужой шаблон.</p></div></article><article><span>02</span><div><h3>С умом</h3><p>Продуманная навигация, адаптивность и контент, который помогает принять решение.</p></div></article><article><span>03</span><div><h3>С запасом</h3><p>Чистая структура и быстрая загрузка — хорошая основа для развития и продвижения в поиске.</p></div></article></div></section>
+<main id="top" class="cosmos-main">
+  <section class="cosmos-hero" aria-labelledby="hero-title">
+    <canvas class="cosmos-webgl" data-cosmos-canvas aria-label="Интерактивная анимация цифровой сферы" role="img"></canvas>
+    <div class="hero-vignette"></div>
+    <div class="hero-topline"><span><i></i> НЕЗАВИСИМАЯ ВЕБ-СТУДИЯ</span><span>DESIGN ENGINE / 001</span></div>
+    <div class="hero-content">
+      <p class="hero-overline"><span>01</span> ИДЕИ, КОТОРЫЕ ОБРЕТАЮТ ФОРМУ</p>
+      <h1 id="hero-title">Сайты,<br>которые <em>чувствуешь.</em></h1>
+      <div class="hero-bottomline"><p>Создаём выразительные цифровые решения — от первого визуального образа до готового сайта, который работает на ваш бизнес.</p><div class="hero-cta-group"><a class="cosmos-button" href={base + 'contacts/'}>Создать мой сайт <span>↗</span></a><a class="hero-scroll" href="#work"><span class="scroll-line"></span> Исследовать</a></div></div>
+    </div>
+    <div class="hero-object-label label-left"><span class="label-dot"></span><span>ЖИВАЯ ГРАФИКА<small>WEBGL · REAL-TIME</small></span></div>
+    <div class="hero-object-label label-right"><span>КУРСОР УПРАВЛЯЕТ СЦЕНОЙ</span><b>↖</b></div>
+    <div class="hero-index"><span>54° 42' N / 20° 30' E</span><span>ВИЗУАЛЬНАЯ СИСТЕМА — 2026</span><span>SCROLL TO EXPLORE ↓</span></div>
+  </section>
 
-<section class="concepts section-shell" id="concepts" aria-labelledby="concepts-title">
-  <div class="concepts-heading" data-reveal><div><div class="section-kicker">[ 02 — ВИЗУАЛЬНЫЕ КОНЦЕПЦИИ ]</div><h2 id="concepts-title">Не шаблоны.<br /><em>Своя история.</em></h2></div><p>Три демонстрационных направления — чтобы увидеть, как дизайн может передавать характер бизнеса. Это визуальные концепции, а не выдуманные клиентские проекты.</p></div>
-  <div class="concept-grid">
-    <article class="concept-card concept-architecture" data-reveal><div class="concept-meta"><span>01 / АРХИТЕКТУРА</span><span>КОНЦЕПЦИЯ</span></div><div class="architecture-art" aria-hidden="true"><span class="architecture-sun"></span><span class="architecture-arch arch-one"></span><span class="architecture-arch arch-two"></span><span class="architecture-floor"></span><span class="architecture-caption">ФОРМА<br />И СВЕТ</span></div><div class="concept-copy"><h3>Пространство<br /><em>для идей.</em></h3><p>Сдержанная подача для архитектурного бюро или студии интерьеров.</p></div></article>
-    <article class="concept-card concept-local" data-reveal><div class="concept-meta"><span>02 / МЕСТНЫЙ БИЗНЕС</span><span>КОНЦЕПЦИЯ</span></div><div class="local-art" aria-hidden="true"><span class="local-orb"></span><span class="local-ring"></span><span class="local-word">СВОЁ<br />МЕСТО</span><span class="local-small">КАЖДЫЙ ДЕНЬ · РЯДОМ</span></div><div class="concept-copy"><h3>Место,<br /><em>куда хочется.</em></h3><p>Тёплый и узнаваемый образ для кафе, мастерской или пространства услуг.</p></div></article>
-    <article class="concept-card concept-product" data-reveal><div class="concept-meta"><span>03 / ЦИФРОВОЙ ПРОДУКТ</span><span>КОНЦЕПЦИЯ</span></div><div class="product-art" aria-hidden="true"><div class="product-giant">ПРОЩЕ<span>.</span><br />БЫСТРЕЕ<span>.</span></div><div class="product-panel"><span>ВАШИ ЗАДАЧИ</span><strong>В одном месте.</strong><i></i><i></i><i></i><b>→</b></div><div class="product-index">ПОНЯТНО С ПЕРВОГО ВЗГЛЯДА / 03</div></div><div class="concept-copy"><h3>Сложное —<br /><em>понятно.</em></h3><p>Ясный интерфейс для сервиса, личного кабинета или необычного веб-инструмента.</p></div></article>
-  </div>
-</section>
-<section class="services section-shell" id="services"><div class="section-heading" data-reveal><div><div class="section-kicker">[ 03 — УСЛУГИ ]</div><h2>Ваш следующий<br /><em>шаг в сети.</em></h2></div><p>Выбираем формат не по моде, а по задаче. Честная отправная точка — понятный объём работ и прозрачная стоимость.</p></div>
-<div class="service-list">{services.map((service) => <article class="service-card" data-reveal><div class="service-number">{service.number}</div><div class="service-main"><div class="service-tag">{service.tag}</div><h3>{service.title}</h3><p>{service.text}</p></div><div class="service-price">{service.price}</div><a class="service-arrow" href={import.meta.env.BASE_URL + "services/" + (service.number === "01" ? "landing/" : service.number === "02" ? "business-card/" : service.number === "03" ? "corporate/" : "custom/")} aria-label={'Подробнее: ' + service.title}>↗</a></article>)}</div><p class="price-note">Стоимость указана как ориентир. Итоговая цена зависит от структуры, контента и функциональности — всё согласуем до старта.</p></section>
-<section class="manifesto"><div class="manifesto-inner section-shell" data-reveal><div class="section-kicker">[ 04 — НАША ФОРМУЛА ]</div><p>Меньше случайного.<br />Больше <span>точного.</span></p><div class="manifesto-aside">Дизайн привлекает.<br />Содержание убеждает.<br />Технологии помогают.</div><span class="manifesto-star">✳</span></div></section>
-<section class="process section-shell" id="process"><div class="section-heading" data-reveal><div><div class="section-kicker">[ 05 — КАК МЫ РАБОТАЕМ ]</div><h2>Понятно<br /><em>на каждом этапе.</em></h2></div><p>Вы понимаете, что происходит, зачем это нужно и какой следующий шаг. Без туманных обещаний и неприятных сюрпризов.</p></div>
-<div class="process-grid"><article data-reveal><span>01 / Погружение</span><h3>Слушаем<br />и уточняем</h3><p>Разбираемся в цели, аудитории и задаче. Определяем состав работ и критерии результата.</p></article><article data-reveal><span>02 / Концепция</span><h3>Собираем<br />направление</h3><p>Проектируем структуру, визуальный язык и путь пользователя к целевому действию.</p></article><article data-reveal><span>03 / Разработка</span><h3>Превращаем<br />в реальность</h3><p>Создаём адаптивный сайт, проверяем детали и готовим сайт к продвижению в поиске.</p></article><article data-reveal><span>04 / Запуск</span><h3>Проверяем<br />и передаём</h3><p>Тестируем отображение и ссылки, публикуем сайт и передаём файлы с инструкцией.</p></article></div></section>
-<section class="faq section-shell" id="faq"><div class="faq-heading" data-reveal><div class="section-kicker">[ 06 — ВОПРОСЫ ]</div><h2>Частые<br /><em>вопросы.</em></h2><p>Всё важное — до начала работы.</p></div><div class="faq-list">{questions.map(([question, answer]) => <details class="faq-item"><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div></section>
-<section class="contact section-shell" id="contact"><div class="contact-top"><div class="section-kicker">[ 07 — НАЧНЁМ? ]</div><div class="contact-orbit">↗</div></div><h2>Есть идея?<br /><em>Давайте обсудим.</em></h2><div class="contact-bottom"><p>Расскажите пару слов о проекте. Вместе найдём подходящий формат и определим следующий шаг.</p><a class="button button-light" href={import.meta.env.BASE_URL + "contacts/"}>Обсудить проект <span>↗</span></a></div><p class="contact-note">На странице контактов — информация о том, что нужно для старта.</p></section>
+  <section class="signal-strip" aria-label="Наши возможности"><div class="signal-track"><span>АВТОРСКИЙ ДИЗАЙН</span><b>✳</b><span>ИНТЕРАКТИВНЫЕ СЦЕНЫ</span><b>✳</b><span>БЫСТРАЯ РАЗРАБОТКА</span><b>✳</b><span>АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ</span><b>✳</b><span>АВТОРСКИЙ ДИЗАЙН</span><b>✳</b><span>ИНТЕРАКТИВНЫЕ СЦЕНЫ</span><b>✳</b></div></section>
+
+  <section class="manifesto-section cosmos-shell" id="method">
+    <div class="section-meta"><span>02 / ПРИНЦИП</span><span>НЕ ПО ШАБЛОНУ</span></div>
+    <div class="manifesto-layout"><h2>Ваш бизнес.<br>Ваш характер.<br><em>Ваш сайт.</em></h2><div class="manifesto-copy"><span class="big-asterisk">✳</span><p>Сайт — это не просто набор блоков. Это первое впечатление, ощущение от бренда и понятный ответ на вопрос: почему стоит выбрать именно вас.</p><p>Мы соединяем визуальную смелость с ясной структурой и технологичной реализацией. Не ради эффектов — ради результата, который замечают.</p><a class="text-arrow" href={base + 'contacts/'}>Расскажите о своей задаче <span>↗</span></a></div></div>
+    <div class="manifesto-foot"><span>ДИЗАЙН СМЕЛО</span><span>РАЗРАБОТКА ТОЧНО</span><span>РАБОТАЕТ ВЕЗДЕ</span></div>
+  </section>
+
+  <section class="work-section" id="work">
+    <div class="cosmos-shell">
+      <div class="section-meta"><span>03 / ВИЗУАЛЬНЫЕ КОНЦЕПЦИИ</span><span>СМОТРИТЕ БЛИЖЕ ↘</span></div>
+      <div class="work-heading"><h2>Не слова.<br><em>Посмотрите.</em></h2><p>Три самостоятельных направления дизайна. Это авторские демонстрационные концепции, показывающие разные подходы к сайтам.</p></div>
+      <div class="work-grid">
+        <a class="work-card work-architecture" href={base + 'services/custom/'}><div class="work-card-top"><span>CONCEPT / 001</span><span>АРХИТЕКТУРА ↗</span></div><div class="architecture-scene"><div class="arch-sun"></div><div class="arch-shape arch-shape-a"></div><div class="arch-shape arch-shape-b"></div><div class="arch-floor"></div><span class="scene-coordinate">FORM / LIGHT / SPACE</span></div><div class="work-card-bottom"><div><h3>Форма<br><em>и тишина.</em></h3><p>Архитектура · Интерьеры · Пространство</p></div><span class="work-open">↗</span></div></a>
+        <a class="work-card work-culture" href={base + 'services/custom/'}><div class="work-card-top"><span>CONCEPT / 002</span><span>КУЛЬТУРА ↗</span></div><div class="culture-scene"><div class="culture-disc"></div><div class="culture-ring"></div><div class="culture-type">БЛИЖЕ<br>К СЕБЕ<span>®</span></div><div class="culture-caption">FIND YOUR OWN FREQUENCY</div></div><div class="work-card-bottom"><div><h3>Почувствуй<br><em>своё.</em></h3><p>Музыка · События · Сообщества</p></div><span class="work-open">↗</span></div></a>
+        <a class="work-card work-product" href={base + 'services/custom/'}><div class="work-card-top"><span>CONCEPT / 003</span><span>ТЕХНОЛОГИИ ↗</span></div><div class="product-scene"><div class="product-orb"></div><div class="product-interface"><div class="interface-top"><span>STUDIO / OS</span><span>● LIVE</span></div><div class="interface-title">Всё.<br>На своих<br><em>местах.</em></div><div class="interface-lines"><i></i><i></i><i></i></div><div class="interface-bottom">YOUR IDEAS, IN MOTION <b>↗</b></div></div><span class="product-coordinate">INTERFACE STUDY / 03</span></div><div class="work-card-bottom"><div><h3>Сложное —<br><em>понятно.</em></h3><p>Сервисы · Продукты · Интерфейсы</p></div><span class="work-open">↗</span></div></a>
+      </div>
+      <p class="work-disclaimer">Все три работы — визуальные концепции, а не реальные клиентские проекты.</p>
+    </div>
+  </section>
+
+  <section class="services-section cosmos-shell" id="services">
+    <div class="section-meta"><span>04 / ЧТО МЫ ДЕЛАЕМ</span><span>ОТ ИДЕИ ДО ЗАПУСКА</span></div>
+    <div class="services-heading"><h2>Хорошая идея.<br><em>Сильная форма.</em></h2><p>Подберём формат под вашу задачу, объясним состав работ и заранее согласуем стоимость. Без загадок и внезапных расходов.</p></div>
+    <div class="services-list">{services.map((service) => <a class="service-line" href={base + 'services/' + service.href}><span class="service-line-number">{service.n}</span><div class="service-line-main"><h3>{service.title}</h3><p>{service.text}</p></div><span class="service-line-price">{service.price}</span><span class="service-line-arrow">↗</span></a>)}</div>
+    <div class="services-note"><span>НЕ ЗНАЕТЕ, ЧТО ВЫБРАТЬ?</span><a href={base + 'contacts/'}>Обсудим задачу вместе <b>↗</b></a></div>
+  </section>
+
+  <section class="statement-section"><div class="statement-orbit" aria-hidden="true"></div><div class="statement-inner cosmos-shell"><div class="section-meta"><span>05 / НАШ ПОДХОД</span><span>LESS NOISE. MORE MEANING.</span></div><p>Не добавляем<br>эффекты. <em>Создаём<br>впечатление.</em></p><div class="statement-bottom"><span>ДИЗАЙН / КОД / ДЕТАЛИ</span><p>Каждый элемент должен работать на общую идею — и оставаться удобным для человека.</p></div></div></section>
+
+  <section class="process-section cosmos-shell"><div class="section-meta"><span>06 / ПРОЦЕСС</span><span>ПРОЗРАЧНО ОТ НАЧАЛА ДО ФИНИША</span></div><div class="process-heading"><h2>От разговора<br><em>до запуска.</em></h2><p>Вы понимаете, что происходит на каждом этапе. Никаких туманных обещаний — только согласованные решения.</p></div><div class="process-steps"><article><span>01 / СЛУШАЕМ</span><h3>Разбираемся<br>в задаче.</h3><p>Цель сайта, аудитория, материалы и то, что должно измениться после запуска.</p></article><article><span>02 / ПРОЕКТИРУЕМ</span><h3>Находим<br>характер.</h3><p>Структура, визуальное направление и логика взаимодействия с посетителем.</p></article><article><span>03 / СОЗДАЁМ</span><h3>Собираем<br>в целое.</h3><p>Дизайн, адаптивная разработка, интерактивность и внимание к деталям.</p></article><article><span>04 / ЗАПУСКАЕМ</span><h3>Проверяем<br>и передаём.</h3><p>Проверка устройств, ссылок и состояний. Готовый сайт и необходимые файлы — вам.</p></article></div></section>
+
+  <section class="final-cta cosmos-shell"><div class="final-cta-top"><span>07 / СЛЕДУЮЩИЙ ШАГ</span><span>ВАША ИДЕЯ МОЖЕТ БЫТЬ СЛЕДУЮЩЕЙ ↙</span></div><h2>Давайте сделаем<br><em>что-то заметное.</em></h2><div class="final-cta-bottom"><p>Расскажите, какой сайт нужен вашему делу. Начнём с идеи — вместе найдём решение, которое будет работать.</p><a class="cosmos-button cosmos-button-light" href={base + 'contacts/'}>Обсудить мой проект <span>↗</span></a></div><div class="cta-giant-mark" aria-hidden="true">W<span>·</span></div></section>
 </main>
-<footer class="footer section-shell"><a class="brand" href={import.meta.env.BASE_URL}><span class="brand-mark">В<span>·</span></span><span class="brand-name">ВЕБ<span>СТУДИЯ</span></span></a><p>Создаём впечатление. И сайты, которые работают.</p><span>© <span data-year>2026</span> Веб-студия</span><a href="#top" class="back-top">Наверх ↑</a></footer>
+<footer class="cosmos-footer cosmos-shell"><a class="cosmos-brand" href={base}><span class="brand-symbol">W<span>·</span></span><span>WEB STUDIO<small>ДИЗАЙН · РАЗРАБОТКА</small></span></a><p>Создаём сайты, которые хочется показать.</p><span>© {new Date().getFullYear()} WEB STUDIO</span><a href="#top">В НАЧАЛО ↑</a></footer>
+<script>
+const canvas = document.querySelector('[data-cosmos-canvas]');
+if (canvas instanceof HTMLCanvasElement) {
+  const gl = canvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' });
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const smallScreen = window.matchMedia('(max-width: 700px)').matches;
+  if (gl) {
+    const vertexSource = 'attribute vec2 position; void main(){ gl_Position=vec4(position,0.0,1.0); }';
+    const fragmentSource = `precision mediump float;
+      uniform vec2 resolution; uniform vec2 pointer; uniform float time;
+      float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
+      void main(){
+        vec2 uv=(gl_FragCoord.xy-.5*resolution)/min(resolution.x,resolution.y);
+        vec2 p=uv; p.x-=.19; p.y+=.02;
+        float t=time*.12; float rot=pointer.x*.25+sin(t)*.12;
+        float c=cos(rot),s=sin(rot); p=mat2(c,-s,s,c)*p;
+        float r=length(p); float a=atan(p.y,p.x);
+        vec3 col=vec3(.018,.025,.022);
+        float stars=step(.997,noise(floor((uv+vec2(time*.001,0.))*180.)));
+        col+=stars*vec3(.5,.8,.3);
+        float halo=exp(-abs(r-.39)*12.)*.11;
+        col+=halo*vec3(.48,.85,.16);
+        float sphere=step(r,.39);
+        float z=sqrt(max(.0,.39*.39-r*r));
+        vec3 normal=normalize(vec3(p,z));
+        float light=max(0.,dot(normal,normalize(vec3(-.5,.65,.8))));
+        float lat=asin(clamp(normal.y,-1.,1.)); float lon=atan(normal.z,normal.x);
+        float gridA=1.-smoothstep(.012,.028,abs(sin(lat*24.)));
+        float gridB=1.-smoothstep(.012,.028,abs(sin(lon*32.)));
+        float grid=(gridA+gridB)*.5;
+        float atmosphere=pow(max(0.,1.-z/.39),2.);
+        vec3 sphereCol=mix(vec3(.035,.075,.045),vec3(.72,.98,.25),light*.78);
+        sphereCol=mix(sphereCol,vec3(.65,1.,.22),grid*.72);
+        sphereCol+=vec3(.16,.38,.05)*atmosphere;
+        col=mix(col,sphereCol,sphere);
+        col+=halo*vec3(.35,.55,.08);
+        float ringDist=abs(p.y*.43+p.x*.9);
+        float ring=exp(-ringDist*190.)*smoothstep(.52,.34,r)*.35;
+        col+=ring*vec3(.7,.95,.25);
+        float vignette=1.-smoothstep(.25,.85,length(uv*vec2(.8,1.)));
+        col*=.55+.45*vignette;
+        gl_FragColor=vec4(col,clamp(max(max(col.r,col.g),col.b)*2.2,0.,.94));
+      }`;
+    const compile = (type, source) => {
+      const shader = gl.createShader(type);
+      if (!shader) return null;
+      gl.shaderSource(shader, source); gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) { gl.deleteShader(shader); return null; }
+      return shader;
+    };
+    const vs = compile(gl.VERTEX_SHADER, vertexSource);
+    const fs = compile(gl.FRAGMENT_SHADER, fragmentSource);
+    const program = vs && fs ? gl.createProgram() : null;
+    if (program && vs && fs) {
+      gl.attachShader(program, vs); gl.attachShader(program, fs); gl.linkProgram(program);
+      if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        const buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
+        gl.useProgram(program);
+        const position = gl.getAttribLocation(program, 'position'); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+        const resolution = gl.getUniformLocation(program, 'resolution'); const pointer = gl.getUniformLocation(program, 'pointer'); const time = gl.getUniformLocation(program, 'time');
+        let px = 0, py = 0, raf = 0, start = performance.now(), visible = true;
+        const resize = () => {
+          const rect = canvas.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, smallScreen ? 1 : 1.35);
+          canvas.width = Math.max(1, Math.floor(rect.width*dpr)); canvas.height = Math.max(1, Math.floor(rect.height*dpr)); gl.viewport(0,0,canvas.width,canvas.height);
+        };
+        const draw = (now) => {
+          if (!visible) { raf = 0; return; }
+          gl.uniform2f(resolution, canvas.width, canvas.height);
+          gl.uniform2f(pointer, px, py);
+          gl.uniform1f(time, reduced ? 0 : (now-start)/1000);
+          gl.drawArrays(gl.TRIANGLES,0,6);
+          if (!reduced) raf = requestAnimationFrame(draw);
+        };
+        const observer = new IntersectionObserver((entries) => {
+          visible = entries[0].isIntersecting;
+          if (visible && !reduced && !raf) raf = requestAnimationFrame(draw);
+          if (!visible && raf) { cancelAnimationFrame(raf); raf = 0; }
+          if (visible && reduced) draw(performance.now());
+        }, {threshold:0.01});
+        observer.observe(canvas);
+        resize();
+        if (reduced) draw(performance.now()); else raf = requestAnimationFrame(draw);
+        window.addEventListener('resize', resize, {passive:true});
+        canvas.parentElement?.addEventListener('pointermove', (event) => {
+          const rect = canvas.getBoundingClientRect(); px = (event.clientX-rect.left)/rect.width-.5; py = (event.clientY-rect.top)/rect.height-.5;
+        }, {passive:true});
+      }
+    }
+  }
+}
+</script>
 </BaseLayout>
