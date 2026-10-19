@@ -5,7 +5,7 @@ compatibility_date = "2026-10-19"
 [[d1_databases]]
 binding = "DB"
 database_name = "web-studio-chat"
-database_id = "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID"
+database_id = "4bd57984-20ad-410c-b948-a9f9327b83b4"
 
 [vars]
 ALLOWED_ORIGIN = "https://kinodoc.github.io"
