@@ -174,8 +174,6 @@ for (const [label, pattern] of required) {
 }
 
 if (html.includes('hello@example.com')) warnings.push('В сборке остался временный контакт hello@example.com — заменить до публикации.');
-if (html.includes('kinodoc.github.io/web-studio')) warnings.push('SEO-адрес всё ещё указывает на GitHub Pages — сверить с реальным URL перед публикацией.');
-
 
 // Audit every generated page, not only the homepage. This catches broken links,
 // missing metadata, duplicate IDs, and heading issues on service/contact pages too.
