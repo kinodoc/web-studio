@@ -11,12 +11,12 @@
 ## Required setup before the chat is live
 1. Create a Cloudflare D1 database and replace the placeholder `database_id` in `worker/wrangler.toml`.
 2. Apply `worker/schema.sql` to that database.
-3. Deploy the Worker.
+3. Create/deploy the Worker named `web-studio-client-chat` using `worker/wrangler.toml` and `worker/src/index.ts`. Ensure its D1 binding is named `DB` and points to `web-studio-chat`.
 4. Set Worker secrets: `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `RESEND_API_KEY`, `ADMIN_EMAIL`, and `EMAIL_FROM`. Email notification requires a configured Resend account and verified sender.
-5. Set the GitHub Actions build variable `PUBLIC_CHAT_API_URL` to the deployed Worker origin, then update the Pages workflow to expose that variable during build.
-6. Build and test the Worker and Astro site. Test client messages, email delivery, reload persistence, mobile expansion, admin login, admin replies, and CORS.
-7. Build the protected admin chat UI against `/api/admin/login`, `/api/admin/conversations`, and `/api/admin/messages`.
-8. Only after end-to-end verification, replace the contact form with the chat as the primary contact path.
+5. In the GitHub repository settings, add the Actions repository variable `PUBLIC_CHAT_API_URL` with the deployed Worker origin (for example, `https://web-studio-client-chat.<your-subdomain>.workers.dev`). The Pages workflow now passes this variable to the Astro build. Re-run the workflow after adding/changing it.
+6. Build and test the Worker and Astro site. Test client messages, email delivery, reload persistence, mobile expansion, admin login, admin replies, and CORS. The admin page is `/web-studio/admin-chat/` on the GitHub Pages project site.
+7. Only after end-to-end verification, replace the contact form with the chat as the primary contact path.
+8. Before production, add an independent backup and test restoring it.
 
 ## Reliability and recovery
 - D1 is the primary message store; the Worker does not depend on the studio VPS.
