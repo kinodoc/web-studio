@@ -135,7 +135,7 @@ body.cosmos-home .skip-link{z-index:100}
 .cosmos-footer{display:flex;align-items:center;justify-content:space-between;gap:22px;padding-bottom:30px;color:#899183;font-size:9px}
 .cosmos-footer p{max-width:260px;margin:0}.cosmos-footer>a:last-child{color:var(--cos-lime);letter-spacing:.1em}
 body.cosmos-home .footer,body.cosmos-home .site-header,body.cosmos-home .home-page,body.cosmos-home .cursor-glow{display:none}
-body.cosmos-home .cosmos-header,body.cosmos-home .cosmos-main,body.cosmos-home .cosmos-footer{position:relative;z-index:1}
+body.cosmos-home .cosmos-header{position:relative;z-index:50}body.cosmos-home .cosmos-main,body.cosmos-home .cosmos-footer{position:relative;z-index:1}
 html.js-enabled body.cosmos-home [data-reveal]{opacity:1;transform:none}
 .cosmos-home a:focus-visible,.cosmos-home button:focus-visible{outline:2px solid var(--cos-lime);outline-offset:4px}
 @media(max-width:1050px){
