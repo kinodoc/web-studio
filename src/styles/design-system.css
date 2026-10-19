@@ -1,6 +1,16 @@
 /* WEB STUDIO — unified immersive design system */
 :root{color-scheme:dark;--bg:#080a14;--surface:#101326;--text:#f4f5ff;--muted:#a1a8c2;--line:rgba(184,194,255,.17);--acid:#a9ffdc;--violet:#8d7cff;--cyan:#70e7ff;--display:'Unbounded','Arial',sans-serif;--body:'Manrope',Arial,sans-serif;--shell:min(1240px,calc(100% - 72px))}
 html{background:var(--bg);color-scheme:dark;scroll-behavior:smooth;scroll-padding-top:100px;overflow-x:clip}
+@view-transition{navigation:auto}
+.site-header{view-transition-name:studio-header}
+::view-transition-old(root){animation:studio-fade-out .16s ease both}
+::view-transition-new(root){animation:studio-fade-in .28s cubic-bezier(.2,.75,.25,1) both}
+::view-transition-old(studio-header){animation:studio-header-out .18s ease both}
+::view-transition-new(studio-header){animation:studio-header-in .28s cubic-bezier(.2,.75,.25,1) both}
+@keyframes studio-fade-out{to{opacity:0;filter:blur(3px)}}
+@keyframes studio-fade-in{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:blur(0)}}
+@keyframes studio-header-out{to{opacity:.4}}
+@keyframes studio-header-in{from{opacity:.4}to{opacity:1}}
 body,body.home-body{--bg:#080a14;--surface:#101326;--text:#f4f5ff;--muted:#a1a8c2;--line:rgba(184,194,255,.17);--acid:#a9ffdc;--violet:#8d7cff;--cyan:#70e7ff;background-color:var(--bg);color:var(--text);background-image:radial-gradient(ellipse at 75% 0%,rgba(91,79,210,.18),transparent 35%),radial-gradient(ellipse at 5% 30%,rgba(41,161,190,.08),transparent 28%),linear-gradient(rgba(153,169,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(153,169,255,.035) 1px,transparent 1px);background-size:auto,auto,64px 64px,64px 64px;background-attachment:scroll}
 body:after{display:none}::selection{background:var(--acid);color:#080a14}
 .section-shell,.site-header{width:var(--shell);max-width:1240px}.site-header{height:88px;border-bottom:1px solid var(--line);z-index:30}
