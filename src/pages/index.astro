@@ -11,7 +11,15 @@ const services = [
 <BaseLayout pageClass="cosmos-home" title="WEB STUDIO — цифровые миры, созданные для людей" description="Создаём цифровые продукты и веб-вселенные для людей: выразительный дизайн, живые интерактивные миры и технологии, которые помогают идеям обрести жизнь." canonical="https://kinodoc.github.io/web-studio/">
 <header class="cosmos-header">
   <a class="cosmos-brand" href={base} aria-label="WEB STUDIO — главная"><span class="brand-symbol">W<span>·</span></span><span>WEB STUDIO<small>ЦИФРОВЫЕ МИРЫ · ПРОДУКТЫ</small></span></a>
-  <nav class="cosmos-nav" id="site-navigation" data-menu aria-label="Главная навигация"><a href="#work">Работы</a><a href="#services">Услуги</a><a href="#method">Подход</a><a href={base + 'contacts/'} class="nav-contact">Рассказать об идее <span>↗</span></a></nav>
+  <nav class="cosmos-nav" id="site-navigation" data-menu aria-label="Главная навигация">
+    <a href={base}>Главная</a>
+    <a href={base + 'services/'}>Услуги</a>
+    <a href={base + 'services/landing/'}>Лендинги</a>
+    <a href={base + 'services/business-card/'}>Сайты-визитки</a>
+    <a href={base + 'services/corporate/'}>Корпоративные сайты</a>
+    <a href={base + 'services/custom/'}>Индивидуальная разработка</a>
+    <a href={base + 'contacts/'} class="nav-contact">Контакты <span>↗</span></a>
+  </nav>
   <button class="cosmos-menu" type="button" data-menu-toggle aria-controls="site-navigation" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span></button>
 </header>
 <main id="top" class="cosmos-main">
