@@ -95,8 +95,16 @@ if (messageField && speechButton && speechButtonLabel && speechIndicator && spee
         env.allowLocalModels = false;
         env.useBrowserCache = true;
         return pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', {
-          device: 'wasm',
-          dtype: 'q8'
+          dtype: 'q8',
+          progress_callback: (progress: { status?: string; file?: string; progress?: number }) => {
+            if (progress.status === 'progress' && typeof progress.progress === 'number') {
+              speechHelp.textContent = 'Загружаем модель распознавания: ' + Math.round(progress.progress) + '%. При первом запуске загрузка может занять несколько минут.';
+            } else if (progress.status === 'done') {
+              speechHelp.textContent = 'Файлы модели загружены. Подготавливаем распознавание…';
+            } else if (progress.status === 'initiate') {
+              speechHelp.textContent = 'Подключаем модель распознавания речи…';
+            }
+          }
         });
       })().catch((error) => {
         transcriberPromise = null;
