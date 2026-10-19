@@ -28,26 +28,26 @@ import '../styles/cosmos.css';
 <script>
 document.documentElement.classList.add('js-enabled');
 const menuToggles = document.querySelectorAll<HTMLButtonElement>('[data-menu-toggle]');
-const closeMenu = (menu: HTMLElement, toggle?: HTMLButtonElement) => {
-  menu.classList.remove('is-open');
-  toggle?.setAttribute('aria-expanded', 'false');
-  toggle?.setAttribute('aria-label', 'Открыть меню');
-};
 menuToggles.forEach((toggle) => {
   const menuId = toggle.getAttribute('aria-controls');
   const menu = menuId ? document.getElementById(menuId) : null;
   if (!menu) return;
+  const closeMenu = () => {
+    menu.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Открыть меню');
+  };
   toggle.addEventListener('click', () => {
     const opened = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', String(!opened));
     toggle.setAttribute('aria-label', opened ? 'Открыть меню' : 'Закрыть меню');
     menu.classList.toggle('is-open', !opened);
   });
-  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => closeMenu(menu, toggle)));
+  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && menu.classList.contains('is-open')) {
-      closeMenu(menu, toggle);
-      toggle.focus();
+      closeMenu();
+      toggle?.focus();
     }
   });
 });
