@@ -28,6 +28,8 @@ jobs:
         run: npm ci
       - name: Security audit
         run: npm audit --audit-level=low
+      - name: Type-check Cloudflare Worker
+        run: npx tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,WebWorker worker/src/index.ts
       - name: Astro diagnostics
         run: npm run check
       - name: Production build
