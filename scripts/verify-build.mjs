@@ -69,6 +69,15 @@ for (const match of html.matchAll(/\b(?:href|src)\s*=\s*["']([^"']+)["']/gi)) {
 const h1Count = [...html.matchAll(/<h1\b[^>]*>/gi)].length;
 if (h1Count !== 1) errors.push(`На странице должен быть ровно один h1; найдено: ${h1Count}`);
 
+let previousHeadingLevel = 0;
+for (const match of html.matchAll(/<h([1-6])\b[^>]*>/gi)) {
+  const level = Number(match[1]);
+  if (previousHeadingLevel && level > previousHeadingLevel + 1) {
+    errors.push(`Нарушена последовательность заголовков: h${previousHeadingLevel} → h${level}`);
+  }
+  previousHeadingLevel = level;
+}
+
 const viewport = /<meta\b(?=[^>]*\bname=["']viewport["'])(?=[^>]*\bcontent=["'][^"']+["'])[^>]*>/i;
 if (!viewport.test(html)) errors.push('Не найден meta viewport с содержимым.');
 
@@ -99,6 +108,8 @@ for (const tag of anchorTags) {
 
 const required = [
   ['русский язык документа', /<html\b[^>]*\blang=["']ru["']/i],
+  ['основная область содержимого', /<main\b[^>]*\bid=["']top["']/i],
+  ['ссылка быстрого перехода к содержимому', /<a\b[^>]*class=["']skip-link["'][^>]*href=["']#top["']/i],
   ['заголовок страницы', /<title>[^<]+<\/title>/i],
   ['meta description', /<meta\b[^>]*\bname=["']description["'][^>]*\bcontent=["'][^"']+["']/i],
   ['canonical URL', /<link\b[^>]*\brel=["']canonical["'][^>]*\bhref=["']https?:\/\/[^"']+["']/i],
