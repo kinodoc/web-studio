@@ -102,13 +102,13 @@ if (canvas instanceof HTMLCanvasElement) {
         col=mix(col,sphereCol,sphere);
         col+=halo*vec3(.35,.55,.08);
         float ringDist=abs(p.y*.43+p.x*.9);
-        float ring=exp(-ringDist*190.)*smoothstep(.52,.34,r)*.35;
+        float ring=exp(-ringDist*190.)*(1.-smoothstep(.34,.52,r))*.35;
         col+=ring*vec3(.7,.95,.25);
         float vignette=1.-smoothstep(.25,.85,length(uv*vec2(.8,1.)));
         col*=.55+.45*vignette;
         gl_FragColor=vec4(col,clamp(max(max(col.r,col.g),col.b)*2.2,0.,.94));
       }`;
-    const compile = (type, source) => {
+    const compile = (type: number, source: string) => {
       const shader = gl.createShader(type);
       if (!shader) return null;
       gl.shaderSource(shader, source); gl.compileShader(shader);
@@ -131,7 +131,7 @@ if (canvas instanceof HTMLCanvasElement) {
           const rect = canvas.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, smallScreen ? 1 : 1.35);
           canvas.width = Math.max(1, Math.floor(rect.width*dpr)); canvas.height = Math.max(1, Math.floor(rect.height*dpr)); gl.viewport(0,0,canvas.width,canvas.height);
         };
-        const draw = (now) => {
+        const draw = (now: number) => {
           if (!visible) { raf = 0; return; }
           gl.uniform2f(resolution, canvas.width, canvas.height);
           gl.uniform2f(pointer, px, py);
