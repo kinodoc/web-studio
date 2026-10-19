@@ -204,6 +204,63 @@ if (root instanceof HTMLElement && !root.dataset.initialized) {
       if (send instanceof HTMLButtonElement) send.disabled = false;
     }
   }
+  transferToggle?.addEventListener('click', () => {
+    if (!(transferTools instanceof HTMLElement)) return;
+    const shown = transferTools.hidden;
+    transferTools.hidden = !shown;
+    transferToggle.setAttribute('aria-expanded', String(shown));
+    if (shown && !api && transferStatus instanceof HTMLElement) transferStatus.textContent = 'Перенос станет доступен после подключения чата.';
+  });
+  transferCreate?.addEventListener('click', async () => {
+    if (!api || !(transferCreate instanceof HTMLButtonElement)) return;
+    transferCreate.disabled = true;
+    if (transferOutput instanceof HTMLOutputElement) transferOutput.textContent = 'Создаём код…';
+    if (transferStatus instanceof HTMLElement) transferStatus.textContent = '';
+    try {
+      await ensureConversation();
+      const result = await request('/api/client/transfer/create', { method: 'POST', body: JSON.stringify({ token, conversationId }) });
+      if (transferOutput instanceof HTMLOutputElement) transferOutput.textContent = 'Ваш код: ' + result.code + ' · действует 5 минут';
+    } catch (error) {
+      if (transferOutput instanceof HTMLOutputElement) transferOutput.textContent = '';
+      if (transferStatus instanceof HTMLElement) transferStatus.textContent = error instanceof Error ? error.message : 'Не удалось создать код.';
+    } finally {
+      transferCreate.disabled = false;
+    }
+  });
+  transferClaim?.addEventListener('click', async () => {
+    if (!api || !(transferClaim instanceof HTMLButtonElement) || !(transferCode instanceof HTMLInputElement)) return;
+    const code = transferCode.value.trim();
+    if (!/^\d{3}$/.test(code)) {
+      if (transferStatus instanceof HTMLElement) transferStatus.textContent = 'Введите ровно три цифры.';
+      return;
+    }
+    transferClaim.disabled = true;
+    if (transferStatus instanceof HTMLElement) transferStatus.textContent = 'Восстанавливаем переписку…';
+    try {
+      const bytes = crypto.getRandomValues(new Uint8Array(32));
+      const nextToken = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+      const result = await request('/api/client/transfer/claim', { method: 'POST', body: JSON.stringify({ code, token: nextToken }) });
+      token = nextToken;
+      localStorage.setItem(tokenKey, token);
+      conversationId = result.conversationId;
+      localStorage.setItem(conversationKey, conversationId);
+      transferCode.value = '';
+      if (transferTools instanceof HTMLElement) transferTools.hidden = true;
+      transferToggle?.setAttribute('aria-expanded', 'false');
+      if (welcome instanceof HTMLElement) welcome.remove();
+      if (transferStatus instanceof HTMLElement) transferStatus.textContent = '';
+      setStatus('Переписка восстановлена на этом устройстве.');
+      await loadMessages();
+      startPolling();
+    } catch (error) {
+      if (transferStatus instanceof HTMLElement) transferStatus.textContent = error instanceof Error ? error.message : 'Не удалось восстановить переписку.';
+    } finally {
+      transferClaim.disabled = false;
+    }
+  });
+  transferCode?.addEventListener('input', () => {
+    if (transferCode instanceof HTMLInputElement) transferCode.value = transferCode.value.replace(/\D/g, '').slice(0, 3);
+  });
   opener?.addEventListener('click', openPanel);
   closer?.addEventListener('click', closePanel);
   expand?.addEventListener('click', () => {
