@@ -20,5 +20,6 @@
 ## Reliability and recovery
 - D1 is the primary message store; the Worker does not depend on the studio VPS.
 - Cloudflare D1's built-in recovery is not a substitute for an independent backup. Before production, add a scheduled export to a separate storage provider and periodically test restoring it.
-- The current browser token supports returning in the same browser profile. Recovery on another device or after browser data is cleared still needs a secure email-based recovery flow; do not claim cross-device recovery until implemented.
+- Three-digit transfer codes have only 1,000 possible values. They expire after five minutes, are single-use, and attempts are throttled per source IP, but this is not equivalent to a password or a high-entropy recovery secret. Keep the expiry and attempt limits; consider requiring confirmation on the source device if stronger protection is needed.
+- The transfer code is not an account recovery mechanism. If the user loses access to all devices and has no active transfer code, the conversation cannot currently be recovered by identity/email.
 - No absolute zero-loss guarantee is possible. Verify backup/restore and email-delivery failure handling before promising this to clients.
