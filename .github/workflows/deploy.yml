@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Audit npm dependencies
+        run: npm audit --audit-level=low || true
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
