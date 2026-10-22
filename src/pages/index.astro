@@ -75,9 +75,19 @@ if (canvas instanceof HTMLCanvasElement) {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const smallScreen = window.matchMedia('(max-width: 700px)').matches;
   if (gl) {
+    const landTexture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, landTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,255]));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const mapImage = new Image();
+    mapImage.onload = () => { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, landTexture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mapImage); };
+    mapImage.src = `${import.meta.env.BASE_URL}world-map.svg`;
     const vertexSource = 'attribute vec2 position; void main(){ gl_Position=vec4(position,0.0,1.0); }';
     const fragmentSource = `precision mediump float;
-      uniform vec2 resolution; uniform vec2 pointer; uniform float time;
+      uniform vec2 resolution; uniform vec2 pointer; uniform float time; uniform sampler2D landMap;
       float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}
       void main(){
@@ -98,17 +108,18 @@ if (canvas instanceof HTMLCanvasElement) {
         float lat=asin(clamp(normal.y,-1.,1.));
         float lon=atan(normal.z,normal.x)+t;
         vec2 globeUV=vec2(lon,lat);
-        float terrain=noise(globeUV*vec2(5.5,8.0));
-        float terrainDetail=noise(globeUV*vec2(17.0,22.0));
-        float land=smoothstep(.485,.535,terrain+terrainDetail*.22+sin(lat*7.0)*.035);
+        vec2 mapUV=vec2(fract(lon/6.2831853+.5),.5+lat/3.1415926);
+        float land=step(.5,texture2D(landMap,mapUV).r);
+        float particle=step(.79,hash(floor(vec2((lon+3.14159)*150.,(lat+1.5708)*78.))));
         float gridA=1.-smoothstep(.012,.028,abs(sin(lat*24.)));
         float gridB=1.-smoothstep(.012,.028,abs(sin(lon*32.)));
         float grid=(gridA+gridB)*.5;
         float atmosphere=pow(max(0.,1.-z/.39),2.);
-        vec3 ocean=mix(vec3(.008,.035,.055),vec3(.025,.22,.30),light*.9);
-        vec3 continents=mix(vec3(.08,.32,.22),vec3(.58,1.,.38),light*.9);
+        vec3 ocean=mix(vec3(.004,.014,.027),vec3(.012,.095,.13),light*.9);
+        vec3 continents=mix(vec3(.018,.10,.07),vec3(.08,.30,.17),light*.9);
         vec3 sphereCol=mix(ocean,continents,land);
-        sphereCol=mix(sphereCol,vec3(.42,1.,.62),grid*.58);
+        sphereCol+=land*particle*vec3(.16,.95,.42);
+        sphereCol=mix(sphereCol,vec3(.26,.95,.58),grid*.36);
         sphereCol+=vec3(.12,.42,.22)*atmosphere;
         col=mix(col,sphereCol,sphere);
         col+=halo*vec3(.35,.55,.08);
@@ -136,7 +147,7 @@ if (canvas instanceof HTMLCanvasElement) {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
         gl.useProgram(program);
         const position = gl.getAttribLocation(program, 'position'); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-        const resolution = gl.getUniformLocation(program, 'resolution'); const pointer = gl.getUniformLocation(program, 'pointer'); const time = gl.getUniformLocation(program, 'time');
+        const resolution = gl.getUniformLocation(program, 'resolution'); const pointer = gl.getUniformLocation(program, 'pointer'); const time = gl.getUniformLocation(program, 'time'); const landMap = gl.getUniformLocation(program, 'landMap'); gl.uniform1i(landMap, 0);
         let px = 0, py = 0, raf = 0, start = performance.now(), visible = true;
         const resize = () => {
           const rect = canvas.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, smallScreen ? 1 : 1.35);
