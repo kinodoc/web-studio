@@ -99,7 +99,8 @@ if (canvas instanceof HTMLCanvasElement) {
         float c=cos(rot),s=sin(rot); p=mat2(c,-s,s,c)*p;
         float r=length(p); float a=atan(p.y,p.x);
         vec3 col=vec3(.018,.025,.022);
-        float stars=step(.997,noise(floor((uv+vec2(time*.001,0.))*180.)));
+        // A single hash per star cell is cheaper than interpolated noise on every pixel.
+        float stars=step(.997,hash(floor((uv+vec2(time*.001,0.))*180.)));
         col+=stars*vec3(.5,.8,.3);
         float halo=exp(-abs(r-.39)*12.)*.11;
         col+=halo*vec3(.48,.85,.16);
@@ -154,7 +155,7 @@ if (canvas instanceof HTMLCanvasElement) {
         const resolution = gl.getUniformLocation(program, 'resolution'); const pointer = gl.getUniformLocation(program, 'pointer'); const time = gl.getUniformLocation(program, 'time'); const landMap = gl.getUniformLocation(program, 'landMap'); gl.uniform1i(landMap, 0);
         let px = 0, py = 0, raf = 0, start = performance.now(), visible = true;
         const resize = () => {
-          const rect = canvas.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, smallScreen ? 1 : 1.35);
+          const rect = canvas.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, smallScreen ? 0.8 : 1.15);
           canvas.width = Math.max(1, Math.floor(rect.width*dpr)); canvas.height = Math.max(1, Math.floor(rect.height*dpr)); gl.viewport(0,0,canvas.width,canvas.height);
         };
         const draw = (now: number) => {
