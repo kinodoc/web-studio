@@ -1,3 +1,4 @@
+<!-- Map geometry: Menelabs VectorAtlas, based on Natural Earth data; CC BY 4.0. https://github.com/melenaos/Menelabs.VectorAtlas -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 1001" width="1200" height="601" fill="#ffffff"><rect width="2000" height="1001" fill="#000000"/>
   <path stroke="#7cffb0" stroke-width="1.6" stroke-linejoin="round" id="fj" d="M2000,667.632L2000,670.344L1992.205,670.81ZM1989.587,675.619L1991.96,679.207L1985.453,679.283ZM1.148,667.375L1.148,667.375L1.148,667.375Z"/>
   <path stroke="#7cffb0" stroke-width="1.6" stroke-linejoin="round" id="tz" d="M1188.354,583.648L1209.437,595.576L1209.816,598.799L1217.79,604.352L1215.554,614.346L1219.111,616.37L1217.703,625.512L1223.981,635.687L1219.561,638.909L1202.856,643.487L1192,642.37L1187.443,630.688L1181.997,629.651L1170.778,624.704L1164.556,614.593L1163,603.37L1170.846,597.033L1169.276,591.781L1168.995,584.674Z"/>
