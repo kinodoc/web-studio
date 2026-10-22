@@ -83,7 +83,7 @@ if (canvas instanceof HTMLCanvasElement) {
       void main(){
         vec2 uv=(gl_FragCoord.xy-.5*resolution)/min(resolution.x,resolution.y);
         vec2 p=uv; p.x-=.19; p.y+=.02;
-        float t=time*1.2; float rot=pointer.x*.12+sin(time*.22)*.025;
+        float t=time*2.4; float rot=pointer.x*.12+sin(time*.22)*.025;
         float c=cos(rot),s=sin(rot); p=mat2(c,-s,s,c)*p;
         float r=length(p); float a=atan(p.y,p.x);
         vec3 col=vec3(.018,.025,.022);
@@ -100,15 +100,15 @@ if (canvas instanceof HTMLCanvasElement) {
         vec2 globeUV=vec2(lon,lat);
         float terrain=noise(globeUV*vec2(5.5,8.0));
         float terrainDetail=noise(globeUV*vec2(17.0,22.0));
-        float land=smoothstep(.53,.59,terrain+terrainDetail*.16+sin(lat*7.0)*.025);
+        float land=smoothstep(.485,.535,terrain+terrainDetail*.22+sin(lat*7.0)*.035);
         float gridA=1.-smoothstep(.012,.028,abs(sin(lat*24.)));
         float gridB=1.-smoothstep(.012,.028,abs(sin(lon*32.)));
         float grid=(gridA+gridB)*.5;
         float atmosphere=pow(max(0.,1.-z/.39),2.);
-        vec3 ocean=mix(vec3(.012,.045,.065),vec3(.025,.16,.19),light*.8);
-        vec3 continents=mix(vec3(.06,.24,.20),vec3(.42,1.,.48),light*.8);
+        vec3 ocean=mix(vec3(.008,.035,.055),vec3(.025,.22,.30),light*.9);
+        vec3 continents=mix(vec3(.08,.32,.22),vec3(.58,1.,.38),light*.9);
         vec3 sphereCol=mix(ocean,continents,land);
-        sphereCol=mix(sphereCol,vec3(.35,1.,.55),grid*.42);
+        sphereCol=mix(sphereCol,vec3(.42,1.,.62),grid*.58);
         sphereCol+=vec3(.12,.42,.22)*atmosphere;
         col=mix(col,sphereCol,sphere);
         col+=halo*vec3(.35,.55,.08);
