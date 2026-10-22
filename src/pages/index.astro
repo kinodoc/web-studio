@@ -112,8 +112,8 @@ if (canvas instanceof HTMLCanvasElement) {
         float lon=atan(normal.x,normal.z)-t; // Eastward rotation: west-to-east, counterclockwise from above the North Pole.
         vec2 mapUV=vec2(fract(lon/6.2831853+.5),clamp(.5+lat/3.1415926,0.,1.));
         vec4 mapPixel=texture2D(landMap,mapUV);
-        float land=step(.35,mapPixel.r);
-        float particle=step(.79,hash(floor(vec2((lon+3.14159)*150.,(lat+1.5708)*78.))));
+        // Smooth the map mask to avoid jagged strips and speckles on small/mobile canvases.
+        float land=smoothstep(.32,.68,mapPixel.r);
         float gridA=1.-smoothstep(.012,.028,abs(sin(lat*24.)));
         float gridB=1.-smoothstep(.012,.028,abs(sin(lon*32.)));
         float grid=(gridA+gridB)*.5;
@@ -122,7 +122,7 @@ if (canvas instanceof HTMLCanvasElement) {
         vec3 continents=mix(vec3(.035,.28,.12),vec3(.32,.95,.42),light*.9);
         vec3 sphereCol=mix(ocean,continents,land);
         sphereCol+=land*vec3(.06,.20,.05);
-        sphereCol+=land*particle*vec3(.20,1.,.48);
+        // Keep continent surfaces clean: no random particle speckles on land.
         // No latitude/longitude grid: keep the land silhouettes clean and recognizable.
         sphereCol+=vec3(.12,.42,.22)*atmosphere;
         col=mix(col,sphereCol,sphere);
