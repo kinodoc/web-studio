@@ -109,7 +109,7 @@ if (canvas instanceof HTMLCanvasElement) {
         float light=max(0.,dot(normal,normalize(vec3(-.5,.65,.8))));
         float lat=asin(clamp(normal.y,-1.,1.));
         // Correct equirectangular Earth projection: full 360-degree longitude.
-        float lon=atan(normal.x,normal.z)+t;
+        float lon=atan(normal.x,normal.z)-t; // Eastward rotation: west-to-east, counterclockwise from above the North Pole.
         vec2 mapUV=vec2(fract(lon/6.2831853+.5),clamp(.5+lat/3.1415926,0.,1.));
         vec4 mapPixel=texture2D(landMap,mapUV);
         float land=step(.35,mapPixel.r);
