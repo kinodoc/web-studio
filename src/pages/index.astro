@@ -80,7 +80,9 @@ if (canvas instanceof HTMLCanvasElement) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,255]));
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    // WebGL 1 requires power-of-two textures for REPEAT; this map is 2000×1001.
+    // Clamp and wrap longitude explicitly in mapUV instead.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     const mapImage = new Image();
     mapImage.onload = () => { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, landTexture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mapImage); };
@@ -121,7 +123,7 @@ if (canvas instanceof HTMLCanvasElement) {
         vec3 sphereCol=mix(ocean,continents,land);
         sphereCol+=land*vec3(.06,.20,.05);
         sphereCol+=land*particle*vec3(.20,1.,.48);
-        sphereCol=mix(sphereCol,vec3(.20,.82,.48),grid*.28);
+        // No latitude/longitude grid: keep the land silhouettes clean and recognizable.
         sphereCol+=vec3(.12,.42,.22)*atmosphere;
         col=mix(col,sphereCol,sphere);
         col+=halo*vec3(.35,.55,.08);
